@@ -1,0 +1,1036 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#16212B">
+<title>jastech — 外商面試英文練習</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#16212B; --surface:#1E2E3A; --surface-2:#25384A;
+    --accent:#F2A65A; --accent-2:#5EC9C0; --again:#E2725B;
+    --text:#ECEAE1; --text-dim:#8FA3AE; --border:#2E4457;
+    --note:#C9A6E8;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  body{
+    margin:0; background:var(--bg); color:var(--text);
+    font-family:'IBM Plex Sans', sans-serif;
+    min-height:100vh; display:flex; flex-direction:column; align-items:center;
+    padding:20px 16px 40px;
+  }
+  .wrap{ width:100%; max-width:480px; }
+  header{ display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; gap:10px;}
+  h1{ font-family:'Space Grotesk', sans-serif; font-size:20px; font-weight:700; margin:0;}
+  h1 span{color:var(--accent);}
+  .hdr-right{ display:flex; align-items:center; gap:10px;}
+  .stat{ font-family:'IBM Plex Mono', monospace; font-size:12px; color:var(--text-dim);}
+  .mode-btn{
+    font-family:'IBM Plex Mono', monospace; font-size:12px; padding:6px 11px;
+    border-radius:20px; border:1px solid var(--accent-2); color:var(--accent-2);
+    cursor:pointer; background:transparent; white-space:nowrap;
+  }
+  .mode-btn.active{ background:var(--accent-2); color:#16212B; font-weight:500;}
+  .chips{ display:flex; gap:7px; margin-bottom:16px; flex-wrap:wrap; }
+  .chip{
+    font-family:'IBM Plex Mono', monospace; font-size:12px; padding:6px 11px;
+    border-radius:20px; border:1px solid var(--border); color:var(--text-dim);
+    cursor:pointer; background:transparent; transition:all .15s;
+  }
+  .chip.active{ background:var(--accent); color:#16212B; border-color:var(--accent); font-weight:500;}
+
+  .card{
+    background:var(--surface); border:1px solid var(--border); border-radius:16px;
+    min-height:300px; padding:24px 20px 40px; display:flex; flex-direction:column;
+    cursor:pointer; position:relative; overflow:hidden;
+  }
+  .card::before{
+    content:''; position:absolute; top:0; left:0; right:0; height:3px;
+    background:linear-gradient(90deg, var(--accent), var(--accent-2)); opacity:0.8;
+  }
+  .tag{ font-family:'IBM Plex Mono', monospace; font-size:11px; color:var(--accent-2); text-transform:uppercase; letter-spacing:1px; margin-bottom:8px;}
+  .probe{
+    align-self:flex-start; font-family:'IBM Plex Mono',monospace; font-size:11px;
+    color:var(--note); background:rgba(201,166,232,0.1); border:1px solid rgba(201,166,232,0.35);
+    padding:3px 9px; border-radius:6px; margin-bottom:12px;
+  }
+  .scan-probe{
+    display:inline-block; font-family:'IBM Plex Mono',monospace; font-size:10px;
+    color:var(--note); background:rgba(201,166,232,0.1); border:1px solid rgba(201,166,232,0.3);
+    padding:2px 7px; border-radius:5px; margin:6px 0 0 16px;
+  }
+  .front{ font-family:'Space Grotesk', sans-serif; font-size:18px; line-height:1.55; font-weight:500; margin:auto 0;}
+  .back{ display:none; font-size:14px; line-height:1.65;}
+  .card.flipped .front{ display:none; }
+  .card.flipped .back{ display:block; }
+  .hint{ position:absolute; bottom:12px; right:16px; font-family:'IBM Plex Mono', monospace; font-size:10px; color:var(--text-dim); opacity:0.6;}
+
+  .b-label{ font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:1.2px; text-transform:uppercase; color:var(--accent); margin:14px 0 6px;}
+  .b-label:first-child{ margin-top:0; }
+  .pattern{ background:var(--surface-2); border-left:3px solid var(--accent); border-radius:0 8px 8px 0; padding:10px 12px; margin-bottom:6px; font-size:14.5px;}
+  .pattern b{ color:var(--accent-2); font-weight:600;}
+  .kw{ display:inline-block; font-family:'IBM Plex Mono',monospace; font-size:12px; background:rgba(94,201,192,0.12); color:var(--accent-2); padding:3px 9px; border-radius:6px; margin:2px 4px 2px 0;}
+  .kw small{ color:var(--text-dim); font-family:'IBM Plex Sans',sans-serif;}
+  .demo{ color:var(--text-dim); font-size:13.5px; font-style:italic;}
+
+  /* why accordion */
+  details.why{ margin-top:14px; border:1px solid var(--border); border-radius:10px; overflow:hidden;}
+  details.why summary{
+    list-style:none; cursor:pointer; padding:10px 14px;
+    font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:1px;
+    color:var(--accent-2); text-transform:uppercase; user-select:none;
+    display:flex; align-items:center; gap:8px;
+  }
+  details.why summary::before{ content:'▸'; transition:transform .15s;}
+  details.why[open] summary::before{ transform:rotate(90deg);}
+  details.why .why-body{ padding:0 14px 12px; font-size:13.5px; color:var(--text); line-height:1.7;}
+  .why-body p{ margin:0 0 8px;}
+  .why-body p:last-child{ margin:0;}
+  .why-body em{ color:var(--accent-2); font-style:normal; font-weight:600;}
+
+  /* my notes */
+  .notes-box{ margin-top:14px; }
+  .notes-box textarea{
+    width:100%; background:var(--surface-2); border:1px solid var(--border);
+    border-left:3px solid var(--note);
+    color:var(--text); border-radius:0 8px 8px 0; padding:10px 12px;
+    font-family:'IBM Plex Sans',sans-serif; font-size:13.5px; line-height:1.6;
+    min-height:64px; resize:vertical;
+  }
+  .notes-box textarea::placeholder{ color:var(--text-dim); opacity:0.7;}
+  .notes-saved{ font-family:'IBM Plex Mono',monospace; font-size:10px; color:var(--note); opacity:0; transition:opacity .3s; margin-top:4px; display:inline-block;}
+  .notes-saved.show{ opacity:0.9; }
+  .b-label.note-l{ color:var(--note); }
+
+  .signal{ display:flex; gap:4px; justify-content:center; margin:16px 0 6px; }
+  .bar{ width:6px; border-radius:2px; background:var(--border); }
+  .bar:nth-child(1){ height:8px;} .bar:nth-child(2){ height:14px;} .bar:nth-child(3){ height:20px;}
+  .bar.on{ background:var(--accent-2); }
+
+  .grade{ display:flex; gap:8px; margin-top:14px; }
+  .grade button{
+    flex:1; padding:13px 0; border-radius:10px; border:none; cursor:pointer;
+    font-family:'IBM Plex Sans',sans-serif; font-weight:600; font-size:13px; transition:transform .1s;
+  }
+  .grade button:active{ transform:scale(0.96);}
+  .g-again{ background:rgba(226,114,91,0.15); color:var(--again);}
+  .g-ok{ background:rgba(242,166,90,0.15); color:var(--accent);}
+  .g-easy{ background:rgba(94,201,192,0.15); color:var(--accent-2);}
+
+  /* prev / next nav */
+  .nav{ display:flex; gap:8px; margin-top:10px; }
+  .nav button{
+    flex:1; padding:10px 0; border-radius:10px; cursor:pointer;
+    background:transparent; border:1px solid var(--border); color:var(--text-dim);
+    font-family:'IBM Plex Mono',sans-serif; font-size:12px; transition:transform .1s;
+  }
+  .nav button:active{ transform:scale(0.96);}
+  .nav button:disabled{ opacity:0.3; cursor:default;}
+
+  .footer{ display:flex; justify-content:space-between; align-items:center; margin-top:20px; gap:8px; flex-wrap:wrap;}
+  .add-btn, .io-btn{
+    background:none; border:1px dashed var(--border); color:var(--text-dim);
+    font-family:'IBM Plex Mono',monospace; font-size:12px; padding:8px 14px; border-radius:8px; cursor:pointer;
+  }
+  .streak{ font-family:'IBM Plex Mono',monospace; font-size:12px; color:var(--text-dim);}
+
+  /* framework cheat-sheet view */
+  #frameView{ display:none; }
+  .frame-sec{
+    background:var(--surface); border:1px solid var(--border); border-radius:14px;
+    padding:18px 16px; margin-bottom:12px; position:relative; overflow:hidden;
+  }
+  .frame-sec::before{
+    content:''; position:absolute; top:0; left:0; right:0; height:3px;
+    background:linear-gradient(90deg, var(--note), var(--accent-2)); opacity:0.7;
+  }
+  .frame-sec h4{
+    font-family:'Space Grotesk',sans-serif; font-size:15px; margin:0 0 4px;
+  }
+  .frame-sec .sub{ font-size:12.5px; color:var(--text-dim); margin:0 0 12px; line-height:1.6;}
+  .frame-sec .pattern{ font-size:13.5px; }
+  .frame-sec .pattern small{ color:var(--text-dim); font-size:11.5px; display:block; margin-top:2px;}
+  .conn-group{ margin-bottom:10px; }
+  .conn-label{
+    display:inline-block; font-family:'IBM Plex Mono',monospace; font-size:11px;
+    color:var(--accent); border:1px solid var(--accent); border-radius:5px;
+    padding:2px 8px; margin-bottom:6px;
+  }
+  .conn{ display:inline-block; font-size:13px; background:var(--surface-2); border:1px solid var(--border);
+    padding:4px 10px; border-radius:7px; margin:2px 4px 2px 0; color:var(--text);}
+
+  /* quick-scan list view */
+  #listView{ display:none; }
+  .scan-item{
+    background:var(--surface); border:1px solid var(--border); border-radius:12px;
+    padding:14px 14px 12px; margin-bottom:10px; cursor:pointer; position:relative;
+  }
+  .scan-item:active{ background:var(--surface-2); }
+  .scan-head{ display:flex; align-items:flex-start; gap:8px; }
+  .dot{ width:8px; height:8px; border-radius:50%; margin-top:6px; flex:none; background:var(--border);}
+  .dot.l1{ background:var(--accent);} .dot.l2{ background:var(--accent-2);} .dot.l0{ background:var(--again);}
+  .scan-q{ font-family:'Space Grotesk',sans-serif; font-size:14.5px; font-weight:500; line-height:1.45;}
+  .scan-cat{ font-family:'IBM Plex Mono',monospace; font-size:10px; color:var(--accent-2); text-transform:uppercase; letter-spacing:1px; margin-left:auto; flex:none; padding-top:3px;}
+  .scan-p{ margin:8px 0 0 16px; font-size:13px; color:var(--text); line-height:1.55;}
+  .scan-p .pattern{ padding:6px 10px; font-size:13px; margin-bottom:4px;}
+  .scan-demo{ margin:6px 0 0 16px; font-size:12.5px; color:var(--text-dim); font-style:italic; line-height:1.55;}
+  .scan-note{ margin:6px 0 0 16px; font-size:12.5px; color:var(--note); line-height:1.55;}
+  .scan-tip{ font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--text-dim); text-align:center; margin:4px 0 12px; opacity:0.7;}
+
+  .modal-bg{ position:fixed; inset:0; background:rgba(0,0,0,0.6); display:none; align-items:center; justify-content:center; padding:20px; z-index:10;}
+  .modal-bg.open{ display:flex;}
+  .modal{ background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:20px; width:100%; max-width:400px; max-height:85vh; overflow-y:auto;}
+  .modal h3{ font-family:'Space Grotesk',sans-serif; margin:0 0 12px; font-size:16px;}
+  .modal p.io-hint{ font-size:12.5px; color:var(--text-dim); line-height:1.6; margin:0 0 10px;}
+  .modal select, .modal textarea, .modal input{
+    width:100%; background:var(--surface-2); border:1px solid var(--border); color:var(--text);
+    border-radius:8px; padding:10px; font-family:'IBM Plex Sans',sans-serif; font-size:14px; margin-bottom:10px;
+  }
+  .modal-actions{ display:flex; gap:8px; justify-content:flex-end; flex-wrap:wrap;}
+  .modal-actions button{ padding:9px 16px; border-radius:8px; border:none; font-family:'IBM Plex Sans',sans-serif; font-size:13px; cursor:pointer;}
+  .btn-cancel{ background:transparent; color:var(--text-dim);}
+  .btn-save{ background:var(--accent); color:#16212B; font-weight:600;}
+  .btn-alt{ background:var(--surface-2); color:var(--accent-2); border:1px solid var(--border) !important;}
+  .io-msg{ font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--accent-2); min-height:16px; margin-bottom:8px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>jas<span>tech</span></h1>
+    <div class="hdr-right">
+      <div class="stat" id="stat">0 / 0</div>
+      <button class="mode-btn" id="scanBtn" onclick="setMode('scan')">☰ 快掃</button>
+      <button class="mode-btn" id="frameBtn" onclick="setMode('frame')">📐 框架</button>
+    </div>
+  </header>
+
+  <div class="chips" id="chips"></div>
+
+  <div id="practiceView">
+    <div class="card" id="card">
+      <div class="tag" id="tag">—</div>
+      <div class="probe" id="probe" style="display:none"></div>
+      <div class="front" id="front">載入中…</div>
+      <div class="back" id="back"></div>
+      <div class="hint" id="hint">點卡片翻面 · 左右滑換題</div>
+    </div>
+
+    <div class="signal" id="signal">
+      <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+    </div>
+
+    <div class="grade">
+      <button class="g-again" onclick="grade(0)">待加強</button>
+      <button class="g-ok" onclick="grade(1)">普通</button>
+      <button class="g-easy" onclick="grade(2)">熟悉</button>
+    </div>
+
+    <div class="nav">
+      <button id="prevBtn" onclick="prevCard()">‹ 上一題</button>
+      <button id="nextBtn" onclick="nextCard()">下一題 ›</button>
+    </div>
+  </div>
+
+  <div id="listView">
+    <div class="scan-tip">快掃模式：一眼掃過題目＋句型骨架，點任一張跳回練習</div>
+    <div id="listItems"></div>
+  </div>
+
+  <div id="frameView">
+    <div class="frame-sec">
+      <h4>① 答案先行 · Pyramid</h4>
+      <p class="sub">觀點題、技術題、「你覺得…」都用這個。先給結論，面試官才知道要往哪裡聽。四句就完整。</p>
+      <div class="pattern">The short answer is ___.<small>結論先講——這一句就贏過 80% 的人</small></div>
+      <div class="pattern">There are <b>two reasons</b>: first, ___. Second, ___.<small>理由編號，聽者自動有地圖</small></div>
+      <div class="pattern">For example, ___.<small>一個具體例子，不用多</small></div>
+      <div class="pattern">So that's why I'd say ___.<small>收回開頭的結論，形成閉環</small></div>
+    </div>
+
+    <div class="frame-sec">
+      <h4>② STAR-L · 經驗題</h4>
+      <p class="sub">所有 "Tell me about a time…" 都用這個。S/T/R/L 各一句，A 佔最多（2–3 句）。全程 45–60 秒。</p>
+      <div class="pattern"><b>S</b> — At the time, I was ___.<small>場景一句就好，不要鋪陳</small></div>
+      <div class="pattern"><b>T</b> — My job was to ___ by ___.<small>你的任務＋期限/標準</small></div>
+      <div class="pattern"><b>A</b> — So what I did was: first ___, then ___.<small>主角是「I」不是「we」，講 2–3 個具體動作</small></div>
+      <div class="pattern"><b>R</b> — As a result, ___.<small>有數字最好：省了幾小時、幾 % 、幾天</small></div>
+      <div class="pattern"><b>L</b> — Looking back, I learned ___.<small>加這句，普通故事變成長曲線的證據</small></div>
+    </div>
+
+    <div class="frame-sec">
+      <h4>③ 起承轉合 · 必備連結詞</h4>
+      <p class="sub">句型可以極簡，但連結詞決定你聽起來像不像「會說話的人」。每組挑 1–2 個用熟就夠。</p>
+      <div class="conn-group"><span class="conn-label">起 · 設場景</span><br>
+        <span class="conn">At the time, ___</span><span class="conn">Back in my internship, ___</span><span class="conn">The situation was ___</span>
+      </div>
+      <div class="conn-group"><span class="conn-label">承 · 講行動</span><br>
+        <span class="conn">So what I did was ___</span><span class="conn">My first step was ___</span><span class="conn">On top of that, ___</span>
+      </div>
+      <div class="conn-group"><span class="conn-label">轉 · 轉折/困難</span><br>
+        <span class="conn">But here's the thing —</span><span class="conn">The tricky part was ___</span><span class="conn">Instead of ___, I ___</span><span class="conn">That said, ___</span>
+      </div>
+      <div class="conn-group"><span class="conn-label">合 · 收結果</span><br>
+        <span class="conn">As a result, ___</span><span class="conn">In the end, ___</span><span class="conn">The takeaway for me was ___</span><span class="conn">That's why ___</span>
+      </div>
+      <div class="conn-group"><span class="conn-label">強調重點</span><br>
+        <span class="conn">What really matters is ___</span><span class="conn">The key point is ___</span>
+      </div>
+      <div class="conn-group"><span class="conn-label">舉例</span><br>
+        <span class="conn">For example, ___</span><span class="conn">To give you a concrete example, ___</span>
+      </div>
+    </div>
+
+    <div class="frame-sec">
+      <h4>④ 救命句 · 沒準備到的題目</h4>
+      <p class="sub">卡住的時候，順序是：爭取時間 → 確認題意 → 靠最近的經驗。永遠不要沉默超過三秒。</p>
+      <div class="pattern">That's a great question — let me think for a second.<small>爭取 3–5 秒，而且聽起來很從容</small></div>
+      <div class="pattern">Just to make sure I understand — are you asking about ___?<small>確認題意，同時再爭取時間</small></div>
+      <div class="pattern">The closest experience I have is ___.<small>沒有完全對應的經驗時，用最接近的</small></div>
+      <div class="pattern">I haven't done that yet — but here's how I'd approach it: ___.<small>把「沒做過」轉成「思考展示」</small></div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <span class="streak" id="streak">今日已練習 0 題</span>
+    <span>
+      <button class="io-btn" onclick="openIO()">⇅ 匯入匯出</button>
+      <button class="add-btn" onclick="openModal()">+ 新增題卡</button>
+    </span>
+  </div>
+</div>
+
+<div class="modal-bg" id="modalBg">
+  <div class="modal">
+    <h3>新增一張練習卡</h3>
+    <select id="newCat">
+      <option value="general">通用 Behavioral</option>
+      <option value="tech">技術 Technical</option>
+      <option value="biz">商業 Business</option>
+      <option value="phone">電面 Phone Screen</option>
+      <option value="presales">Presales 情境</option>
+    </select>
+    <textarea id="newFront" rows="2" placeholder="題目（面試官會說的話，可以難）"></textarea>
+    <input id="newProbe" placeholder="考點（這題在測什麼，選填）">
+    <textarea id="newPatterns" rows="3" placeholder="句型骨架（一行一個，用 ___ 表示要填的地方）"></textarea>
+    <input id="newKeywords" placeholder="關鍵單詞（逗號分隔）">
+    <textarea id="newDemo" rows="2" placeholder="示範句（選填）"></textarea>
+    <textarea id="newWhy" rows="2" placeholder="為什麼這樣答（選填）"></textarea>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal()">取消</button>
+      <button class="btn-save" onclick="saveNewCard()">儲存</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-bg" id="ioBg">
+  <div class="modal">
+    <h3>匯入 / 匯出</h3>
+    <p class="io-hint">
+      <b>備份／換裝置：</b>按「匯出」複製全部資料（自建卡、進度、筆記），到新裝置貼上後按「匯入」。<br>
+      <b>AI 出題：</b>按「複製 AI 出題 prompt」，貼到 Claude / ChatGPT，把它回傳的 JSON 貼進下方框按「匯入」即可加入新卡。
+    </p>
+    <textarea id="ioArea" rows="6" placeholder='貼上 JSON…（支援完整備份格式，或 AI 生成的卡片 array）'></textarea>
+    <div class="io-msg" id="ioMsg"></div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeIO()">關閉</button>
+      <button class="btn-alt" onclick="copyAIPrompt()">複製 AI 出題 prompt</button>
+      <button class="btn-alt" onclick="exportData()">匯出</button>
+      <button class="btn-save" onclick="importData()">匯入</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// Storage: localStorage-backed shim (keeps the async window.storage
+// API shape so all call sites stay unchanged; works offline & on phones)
+// ============================================================
+window.storage = {
+  async get(key){ const v = localStorage.getItem(key); return v === null ? null : {value: v}; },
+  async set(key, value){ localStorage.setItem(key, value); }
+};
+
+// ============================================================
+// Card schema v3
+// front:    interviewer's question — difficult, authentic phrasing (LISTENING input)
+// patterns: simple reusable sentence skeletons (SPEAKING output)
+// keywords: [word, zh gloss]
+// demo:     full sample answer using only the simple patterns
+// why:      為什麼這樣答 — the strategy behind the answer structure (in zh, so it sticks)
+// Target persona: entry-level new grad interviewing at tier-1 MNC (Cisco / Microsoft / UiPath level)
+// ============================================================
+const DEFAULT_CARDS = [
+
+// ================= 通用 GENERAL / BEHAVIORAL =================
+{id:'g1',cat:'general',
+ front:"Tell me about yourself — and please, beyond what's already on your résumé.",
+ patterns:["I'm a recent graduate in ___, and what really defines me is ___.","In the past year, I ___ — for example, ___.","That's why I'm excited about this role: it's exactly where ___ meets ___."],
+ keywords:[["recent graduate","應屆畢業生"],["defines me","定義我的特質"],["hands-on","實作的"]],
+ demo:"I'm a recent graduate in Information Management, and what really defines me is building things to learn. In the past year, I built several AI tools — for example, a chatbot used by a government department. That's why I'm excited about this role: it's exactly where technology meets business.",
+ why:"<p>「beyond your résumé」是在測你有沒有<em>敘事能力</em>，不是要更多事實。結構是：身分一句 → 證據一句 → 連回職缺一句，總共 30 秒。</p><p>Entry-level 最常犯的錯是流水帳講學歷。頂級外商想聽的是：你能不能把自己「包裝成一個 story」——這本身就是工作能力的展示，尤其是 presales。</p>"},
+
+{id:'g2',cat:'general',
+ front:"Walk me through a time you demonstrated ownership over something that wasn't strictly your responsibility.",
+ patterns:["It wasn't my job, but I noticed ___.","Instead of waiting, I ___.","As a result, ___ — and now it's become ___."],
+ keywords:[["ownership","當責"],["take initiative","主動出擊"],["beyond my scope","超出職責範圍"]],
+ demo:"It wasn't my job, but I noticed our department answered the same citizen questions again and again. Instead of waiting, I built a small auto-reply bot on my own time. As a result, response time dropped a lot — and now it's become an official tool.",
+ why:"<p>Ownership 是 Amazon/Microsoft 都在考的核心 value。公式：<em>發現（noticed）→ 行動（instead of waiting）→ 結果變成制度（now it's become）</em>。</p><p>最後一句最關鍵——「變成正式工具/流程」證明你的 ownership 有留下東西，不是一次性熱血。這正好對治「高點火、快冷卻」的刻板印象。</p>"},
+
+{id:'g3',cat:'general',
+ front:"Describe a situation where you received difficult feedback. How did you respond, both immediately and over time?",
+ patterns:["The feedback was ___, and honestly, it was hard to hear at first.","But I realized ___ was right about ___.","Since then, I ___ — and I actually ask for feedback earlier now."],
+ keywords:[["hard to hear","難以接受"],["take it personally","往心裡去"],["act on feedback","根據回饋改進"]],
+ demo:"The feedback was that my presentations had too much detail, and honestly, it was hard to hear at first. But I realized my mentor was right about losing the audience. Since then, I start every deck with one key message per slide — and I actually ask for feedback earlier now.",
+ why:"<p>這題測的是 <em>coachability</em>——entry-level 最重要的特質，因為公司買的是你的成長曲線，不是現在的你。</p><p>「hard to hear at first」這句故意示弱是加分的：承認情緒→轉折→行為改變。結尾「ask for feedback earlier now」把單次事件升級成習慣改變，是滿分答法。</p>"},
+
+{id:'g4',cat:'general',
+ front:"Tell me about a time you failed to meet a commitment. What was the downstream impact, and what did you change?",
+ patterns:["I committed to ___, but I missed it because I underestimated ___.","The impact was ___ — my teammates had to ___.","What I changed: now I always ___ before committing."],
+ keywords:[["miss a deadline","錯過期限"],["downstream impact","後續影響"],["underestimate","低估"]],
+ demo:"I committed to finishing a demo environment in two days, but I missed it because I underestimated the setup complexity. The impact was real — my teammates had to delay the client meeting. What I changed: now I always test the riskiest part first before committing to a timeline.",
+ why:"<p>「downstream impact」是進階問法——他們要看你是否理解<em>你的失誤如何影響別人</em>，這是團隊意識的測試。</p><p>很多人失敗題只講自己學到什麼，忘了先誠實承認對他人的影響。順序必須是：承認 → 影響（具體）→ 系統性改變。改變要是「流程」不是「態度」——「我會更努力」是零分，「我先測最高風險的部分」是滿分。</p>"},
+
+{id:'g5',cat:'general',
+ front:"You'll be the most junior person in the room in most customer meetings. How do you establish credibility without overstating your experience?",
+ patterns:["I won't pretend to know everything — and I think that's actually a strength.","When I don't know, I say: ___, and I follow up within ___.","What I can offer is ___: I've built ___ myself, so I speak from hands-on experience."],
+ keywords:[["credibility","可信度"],["overstate","誇大"],["follow up","後續回覆"]],
+ demo:"I won't pretend to know everything — and I think that's actually a strength. When I don't know, I say: 'Great question, let me confirm with our team,' and I follow up within 24 hours. What I can offer is real hands-on experience: I've built these integrations myself, so I speak from doing, not just slides.",
+ why:"<p>這是專門考新人的陷阱題。錯誤答案是硬撐「我會快速學習補上」——面試官要聽的是你<em>如何優雅地說「我不知道」</em>。</p><p>「I don't know, let me confirm and follow up in 24 hours」在 presales 是標準專業動作，不是弱點。能把「不知道」變成「可靠的後續動作」，就是 credibility 的來源。</p>"},
+
+{id:'g6',cat:'general',
+ front:"Where do you see yourself in five years, and how does this role fit into that trajectory?",
+ patterns:["In five years, I want to be ___ — someone who ___.","This role is the best starting point because ___.","Short term, my goal is simply to ___."],
+ keywords:[["trajectory","發展軌跡"],["trusted advisor","信賴顧問"],["starting point","起點"]],
+ demo:"In five years, I want to be a senior SE — someone customers call before they even talk to sales. This role is the best starting point because I'll learn both the technology and how enterprise deals really work. Short term, my goal is simply to become the most reliable junior on the team.",
+ why:"<p>這題其實在問：<em>你會不會待滿三年</em>。答案要讓面試官相信「這條路的下一步就在我們公司內部」。</p><p>忌諱：說要創業、說要轉去別的 function。最後補一句謙虛的短期目標（most reliable junior）能中和五年願景的野心味，展現腳踏實地。</p>"},
+
+// ================= 技術 TECHNICAL =================
+{id:'t1',cat:'tech',
+ front:"Explain the difference between TCP and UDP, and give me a real-world scenario where you'd deliberately choose UDP despite its unreliability.",
+ patterns:["TCP guarantees ___, but the cost is ___.","UDP doesn't guarantee delivery, but it's much ___.","For ___, losing a packet is better than waiting — that's why we choose UDP."],
+ keywords:[["guaranteed delivery","保證送達"],["handshake","交握"],["real-time","即時"],["packet loss","封包遺失"]],
+ demo:"TCP guarantees delivery and order, but the cost is speed — it needs a handshake and retransmission. UDP doesn't guarantee delivery, but it's much faster. For video calls, losing one packet is better than waiting for it — a frozen frame is worse than a small glitch. That's why we choose UDP.",
+ why:"<p>技術題的高分結構永遠是：<em>定義一句 → trade-off 一句 → 場景判斷一句</em>。背誦定義只有 60 分，講出「為什麼在某場景故意選較差的選項」才是 90 分。</p><p>「a frozen frame is worse than a small glitch」這種一句話的直覺比喻，是 SE 面試最想聽到的能力——你能讓客戶「秒懂」。</p>"},
+
+{id:'t2',cat:'tech',
+ front:"A customer reports intermittent connectivity issues. Walk me through your systematic troubleshooting methodology.",
+ patterns:["First, I narrow down the scope: is it ___, ___, or ___?","Then I check layer by layer, starting from ___.","I always ask: <b>what changed recently?</b>"],
+ keywords:[["intermittent","間歇性的"],["narrow down","縮小範圍"],["isolate the variable","隔離變因"],["reproduce","重現（問題）"]],
+ demo:"First, I narrow down the scope: is it one user, one site, or everyone? Then I check layer by layer, starting from the physical connection up to the application. And I always ask: what changed recently? Most intermittent issues come from a recent change nobody mentioned.",
+ why:"<p>這題不是考你會不會修網路，是考你的<em>思考是否有方法論</em>。面試官在腦中打勾的是三個字：scope → layer → change。</p><p>「what changed recently?」是資深工程師的招牌問題，entry-level 講出這句會瞬間加分——它顯示你懂真實世界的故障多半是人為變更造成的。</p>"},
+
+{id:'t3',cat:'tech',
+ front:"How would you explain what an API is to a CFO who has no technical background but controls the integration budget?",
+ patterns:["Think of it like ___ — you don't need to know how the kitchen works.","An API is a <b>menu and a waiter</b>: you order in a standard way, and get a standard result.","For your budget, what matters is: good APIs mean ___ integration cost."],
+ keywords:[["integration","整合"],["standardized","標準化的"],["maintenance cost","維護成本"]],
+ demo:"Think of it like ordering at a restaurant — you don't need to know how the kitchen works. An API is the menu and the waiter: you order in a standard way, and get a standard result. For your budget, what matters is this: systems with good APIs cost much less to connect and maintain.",
+ why:"<p>注意題目的關鍵字：<em>controls the budget</em>。這題不是比喻大賽——比喻只是開場，真正的考點是你能不能把技術概念<em>落地到對方在乎的錢</em>。</p><p>結構：比喻（10秒）→ 展開（10秒）→ 對他的意義（10秒）。最後一句沒接到 budget/cost，這題就只答了一半。</p>"},
+
+{id:'t4',cat:'tech',
+ front:"What's the difference between authentication and authorization, and why does conflating them create security risk?",
+ patterns:["Authentication asks: <b>who are you?</b> Authorization asks: <b>what are you allowed to do?</b>","Logging in is ___; accessing the admin panel is ___.","If you mix them up, you get ___ — a valid user doing invalid things."],
+ keywords:[["authentication","身分驗證"],["authorization","權限授權"],["least privilege","最小權限原則"],["conflate","混為一談"]],
+ demo:"Authentication asks: who are you? Authorization asks: what are you allowed to do? Logging in is authentication; accessing the admin panel is authorization. If you mix them up, you get a valid user doing invalid things — that's how many insider breaches happen.",
+ why:"<p>這對概念是資安面試的必考基本功。高分答法是用<em>一組對稱句</em>（who are you / what can you do）讓面試官一聽就知道你概念清楚。</p><p>「a valid user doing invalid things」是把抽象風險變成一句畫面感的話——這種 punchline 值得直接背起來，Zero Trust 的討論也能沿用。</p>"},
+
+{id:'t5',cat:'tech',
+ front:"Describe how you'd architect a simple chatbot that answers questions from internal company documents. What are the failure modes?",
+ patterns:["The core pattern is called <b>RAG</b>: retrieve first, then generate.","Step one: ___. Step two: ___. Step three: ___.","The main failure modes are ___ and ___ — and here's how we reduce them: ___."],
+ keywords:[["RAG (retrieval-augmented generation)","檢索增強生成"],["embedding","向量嵌入"],["hallucination","幻覺／虛構回答"],["chunking","文件切塊"]],
+ demo:"The core pattern is called RAG: retrieve first, then generate. Step one: split documents into chunks and store them as embeddings. Step two: when a question comes in, find the most relevant chunks. Step three: give those chunks to the model to generate an answer. The main failure modes are hallucination and bad retrieval — we reduce them by citing sources and testing with real user questions.",
+ why:"<p>2026 年面 AI 相關職缺，RAG 幾乎是必考題。你實際做過 Threads RAG bot，這題是你的<em>主場</em>——答完可以自然補一句 'I actually built one for a government department.'</p><p>「failure modes」是這題的分水嶺：只會講架構是照抄教學文，能講出「會怎麼壞、怎麼防」才證明你真的部署過。</p>"},
+
+{id:'t6',cat:'tech',
+ front:"When would you recommend a customer NOT move a workload to the cloud? I want to hear genuine technical judgment, not marketing.",
+ patterns:["Cloud isn't always the answer — three cases where I'd say no: ___, ___, and ___.","If the workload is ___, on-prem can actually be cheaper.","My job is to recommend what <b>fits</b>, not what we sell."],
+ keywords:[["workload","工作負載"],["data gravity","資料引力"],["steady-state","穩定不變的"],["egress cost","資料傳出費用"]],
+ demo:"Cloud isn't always the answer — three cases where I'd say no: strict data residency rules, very steady workloads that never scale, and huge data egress costs. If the workload is steady and predictable, on-prem can actually be cheaper over five years. My job is to recommend what fits, not what we sell.",
+ why:"<p>「not marketing」是面試官在邀請你<em>展示誠實</em>。這種反向題答得好，可信度暴增——因為 presales 最大的職業風險就是變成只會吹的 sales puppet。</p><p>最後那句 'recommend what fits, not what we sell' 是整張卡的靈魂，它同時回答了另一個沒問出口的問題：你懂不懂 trusted advisor 的意思。</p>"},
+
+{id:'t7',cat:'tech',
+ front:"Your demo environment crashes five minutes before a customer presentation. The customer is already in the room. What do you do?",
+ patterns:["First, I stay calm — panic is worse than a crash.","I switch to plan B: ___ or ___.","And I'm honest: 'We hit a technical issue, so let me show you ___ instead — and I'll send a live recording by ___.'"],
+ keywords:[["fallback plan","備援方案"],["screenshots / recording","截圖／錄影"],["buy time","爭取時間"]],
+ demo:"First, I stay calm — panic is worse than a crash. I switch to plan B: a recorded demo video or screenshots with a walkthrough. And I'm honest with the customer: 'We hit a technical issue, so let me walk you through the flow with the recording — and I'll set up a live session for you this week.' Always have a plan B ready before any demo.",
+ why:"<p>情境壓力題，考的是<em>你有沒有 demo 紀律</em>。標準答案的核心不是臨場反應多機智，而是最後那句：「我本來就準備了 plan B」。</p><p>錄影備份是所有資深 SE 的鐵律。答題時透露出「這是我的既有習慣」而非「我會臨機應變」，層次完全不同。</p>"},
+
+// ================= 商業 BUSINESS =================
+{id:'b1',cat:'biz',
+ front:"How does a presales function actually contribute to revenue, given that you don't carry a quota yourself?",
+ patterns:["We don't close deals, but we ___ them.","My impact shows up in three numbers: ___, ___, and ___.","A deal lost for technical reasons is a ___ failure."],
+ keywords:[["carry a quota","背業績"],["win rate","贏單率"],["deal cycle","成交週期"],["technical win","技術面獲勝"]],
+ demo:"We don't close deals, but we make them closable. My impact shows up in three numbers: win rate, deal cycle length, and deal size. If a customer walks away for technical reasons, that's a presales failure — my job is to make sure technology is never the reason we lose.",
+ why:"<p>這題測你是否理解<em>自己在商業機器裡的位置</em>。Entry-level 能講出 win rate / cycle / size 三個指標，等於告訴面試官：我知道你們怎麼衡量我。</p><p>「make them closable」和「technology is never the reason we lose」都是業界真實的 presales 信條，講出來像已經在圈內。</p>"},
+
+{id:'b2',cat:'biz',
+ front:"Walk me through how you'd calculate and present TCO for a customer comparing our cloud solution against their existing on-prem setup.",
+ patterns:["TCO has three buckets: ___, ___, and the one people forget — ___.","For on-prem, you have to count ___ that don't appear on invoices.","I present it as a ___-year view, because year one always favors ___."],
+ keywords:[["TCO (total cost of ownership)","總持有成本"],["hidden cost","隱藏成本"],["opportunity cost","機會成本"],["depreciation","折舊"]],
+ demo:"TCO has three buckets: upfront cost, operating cost, and the one people forget — people cost. For on-prem, you have to count maintenance hours, upgrades, and downtime that don't appear on invoices. I present it as a three-year view, because year one always favors the status quo — the real difference shows up over time.",
+ why:"<p>TCO 是 presales 商業面的招牌武器。高分關鍵是講出「發票上看不到的成本」——人力、停機、機會成本——這是新手和熟手的分界線。</p><p>「year one always favors the status quo」是很老練的觀察：換系統第一年一定比較貴，所以一定要拉長時間軸比。這句學起來，客戶砍價時直接可用。</p>"},
+
+{id:'b3',cat:'biz',
+ front:"What do you understand about our go-to-market model, and where does this role sit within it?",
+ patterns:["From what I understand, you sell through ___ and ___.","This role sits between ___ and ___ — supporting deals when ___.","I did my homework: for example, I noticed ___."],
+ keywords:[["go-to-market (GTM)","市場進入策略"],["channel partner","通路夥伴"],["direct sales","直銷"],["ecosystem","生態系"]],
+ demo:"From what I understand, you sell through both direct enterprise sales and channel partners. This role sits between the sales team and the customer's technical team — supporting deals when technical validation is needed. I did my homework: for example, I noticed your partner ecosystem drives a big share of mid-market deals, which means SEs often enable partners too.",
+ why:"<p>這題是<em>功課題</em>——答案本身不難，難的是你面試前有沒有真的去查這家公司怎麼賣東西。Cisco 重 channel、Microsoft 重 partner ecosystem、UiPath 直銷+夥伴混合，每家要客製。</p><p>「I did my homework: I noticed ___」這個句型是 entry-level 的大殺器：直接展示準備度，而準備度是新人唯一能贏過經驗的地方。</p>"},
+
+{id:'b4',cat:'biz',
+ front:"A deal is technically sound but commercially stalled — the champion is convinced, but the CFO won't sign. What levers exist?",
+ patterns:["If the CFO won't sign, the problem is usually ___ — risk or timing, not the product.","I'd arm our champion with ___: a one-pager in <b>CFO language</b>.","Other levers: ___, ___, or restructuring the deal as ___."],
+ keywords:[["champion","內部支持者"],["stalled","停滯的"],["lever","槓桿／施力點"],["phased rollout","分階段導入"]],
+ demo:"If the CFO won't sign, the problem is usually risk or timing, not the product. I'd arm our champion with a one-pager in CFO language: payback period, cost of delay, and risk mitigation. Other levers: a smaller phased rollout, a pilot with clear exit options, or shifting the start date to match their budget cycle.",
+ why:"<p>這題已經是 mid-level 難度，出現在 entry-level 面試代表面試官在測你的天花板。答不完整沒關係，但要展現一個核心觀念：<em>CFO 不買產品，CFO 買的是風險管理</em>。</p><p>「arm our champion」是關鍵概念——很多時候你根本進不了 CFO 的房間，你的工作是把武器交給能進去的人。這個認知非常加分。</p>"},
+
+{id:'b5',cat:'biz',
+ front:"How would you prioritize your time across five concurrent opportunities when every account executive claims theirs is the most urgent?",
+ patterns:["I prioritize by ___, not by who shouts loudest.","My quick filter: deal ___, close ___, and whether my work actually changes the ___.","And I communicate it openly: '___ is first because ___.'"],
+ keywords:[["concurrent","同時進行的"],["prioritize","排優先序"],["probability to close","成交機率"],["transparent","透明的"]],
+ demo:"I prioritize by impact, not by who shouts loudest. My quick filter: deal size, close date, and whether my work actually changes the outcome — some deals will close with or without a demo. And I communicate it openly: 'This one is first because it closes this month and needs a PoC.' Transparency stops the fighting.",
+ why:"<p>這題同時考<em>商業判斷</em>和<em>向上/平行溝通</em>。核心句是 'whether my work actually changes the outcome'——資源該投在你能改變結果的地方，這是頂級 SE 的時間觀。</p><p>最後的 transparency 那段很重要：優先序不公開就會變成政治問題。講出「我會公開我的排序邏輯」，面試官會看到一個不會惹麻煩的新人。</p>"},
+
+{id:'b6',cat:'biz',
+ front:"Our product was just criticized in an analyst report the customer has read. They open the meeting by quoting it. Respond.",
+ patterns:["I wouldn't dismiss it — analysts see things we should take seriously.","'That report is right about ___ — and here's what we're doing about it: ___.'","Then I bring it back to <b>their</b> context: 'For your use case, what matters is ___.'"],
+ keywords:[["analyst report","分析師報告"],["dismiss","不屑一顧"],["acknowledge","承認"],["reframe","重新框架"]],
+ demo:"I wouldn't dismiss it — analysts see things we should take seriously. I'd say: 'That report is right about our gaps in that area — and here's our roadmap addressing it.' Then I bring it back to their context: 'For your specific use case, that feature isn't in the critical path — let me show you what is.' Honesty first, then reframe.",
+ why:"<p>公式：<em>acknowledge → address → reframe</em>。直接反駁分析師報告是自殺——客戶會覺得你在說謊或不專業。</p><p>Reframe 的精髓在「for YOUR use case」：報告講的是通用評比，但客戶買的是自己的場景。把戰場從「產品排名」移回「你的需求」，就是 presales 的核心技藝。</p>"},
+
+// ================= 電面 PHONE SCREEN (Cisco GSO Questions.pdf) =================
+// 全部是 "Tell me about a time..." → 一律用 STAR-L 骨架（見「框架」頁）
+{id:'p1',cat:'phone',probe:'Collaboration 跨角色協作',
+ front:"We often have to work with other people to get our work done. Tell me when you had to do this and how you built a strong partnership with that person.",
+ patterns:["I worked with ___ on ___, and we started by agreeing on one shared goal: ___.","To keep the partnership strong, I ___ — for example, ___.","As a result, we ___ — and we still ___ today."],
+ keywords:[["shared goal","共同目標"],["partnership","夥伴關係"],["in their language","用對方的語言"]],
+ demo:"During my chatbot project, I worked with a colleague from the service desk, and we started by agreeing on one shared goal: fewer repeated questions. To keep the partnership strong, I gave her weekly updates in plain language — no tech jargon. As a result, we launched on time — and she's still the first person I go to for user feedback.",
+ why:"<p>電面第一關 Leadership。考點不是「合作愉快」，是你<em>主動做了什麼</em>去建立關係——agree on shared goal（先對齊）＋ update in their language（用對方聽得懂的方式）就是兩個滿分動作。</p><p>結尾「still today」暗示關係是持久的，不是專案結束就散——這是 partnership 和 cooperation 的差別。</p>"},
+
+{id:'p2',cat:'phone',probe:'Problem-solving 解題方法',
+ front:"Tell me about a time when you had to solve a difficult problem. What did you do? What was the result?",
+ patterns:["The problem was ___ — and the tricky part was ___.","I broke it down: first ___, then ___.","The result: ___. And since then, I always ___."],
+ keywords:[["break it down","拆解問題"],["root cause","根本原因"],["the tricky part","棘手之處"]],
+ demo:"The problem was our chatbot giving wrong answers — and the tricky part was it only failed on certain question types. I broke it down: first I collected the failing cases, then I found they all came from one badly-split document. I fixed the chunking, and accuracy went way up. And since then, I always test with real user questions before launch.",
+ why:"<p>面試官要聽的是<em>方法</em>不是英雄故事。「the tricky part was」這句是關鍵——先定義難在哪，才顯得你解的是真問題。</p><p>「I broke it down: first…, then…」就是最簡單的解題敘事骨架。結尾把單次修復升級成習慣（always test before launch），呼應 Learning。</p>"},
+
+{id:'p3',cat:'phone',probe:'Ambiguity 面對模糊',
+ front:"We don't always get all the details when we receive a new task. Tell me about a time when you received a new task to complete and this happened to you. What did you do?",
+ patterns:["The task was vague — all I got was ___.","Before diving in, I asked two questions: what's the ___, and what does ___ look like?","Then I shared a quick draft early, to make sure I was on the right track."],
+ keywords:[["vague","模糊的"],["clarify","釐清"],["a quick draft","快速草稿"],["on the right track","方向正確"]],
+ demo:"The task was vague — all I got was 'make our reports better.' Before diving in, I asked two questions: what's the goal, and what does a good report look like to you? Then I built a one-page draft in a day and shared it early, to make sure I was on the right track. The final version needed only small changes.",
+ why:"<p>Ambiguity 題有標準滿分公式：<em>問目的 → 問成功長什麼樣 → 交早期草稿對齊</em>。錯誤答案是「我就自己猜然後做完」——那叫賭博不叫處理模糊。</p><p>「share a draft early」是外商最愛的工作習慣，它把大風險換成小修正。這題答好，Planning and Executing 直接加分。</p>"},
+
+{id:'p4',cat:'phone',probe:'Communication 確保理解',
+ front:"Tell me about a time when you had to update other people on work you were doing. What did you do to make sure they understood all the information you shared with them?",
+ patterns:["My audience was ___, so I adjusted how I presented: ___.","I led with the conclusion, then ___.","To confirm they understood, I ___ — and I always end with: 'What questions do you have?'"],
+ keywords:[["audience","聽眾"],["lead with the conclusion","結論先行"],["confirm understanding","確認理解"]],
+ demo:"My audience was non-technical managers, so I adjusted how I presented: no jargon, one page only. I led with the conclusion, then showed just three numbers that mattered. To confirm they understood, I asked them what they'd tell their own teams — and I always end with: 'What questions do you have?'",
+ why:"<p>題目後半句才是考點：<em>make sure they understood</em>。溝通完成的定義不是你說完，是對方能複述。「asked them what they'd tell their own teams」就是最聰明的確認法。</p><p>「lead with the conclusion」同時展示了金字塔原則——這題是把「框架」頁的內容變成故事講出來。</p>"},
+
+{id:'p5',cat:'phone',probe:'Learning & Curiosity 學新東西',
+ front:"Tell me about a time when you were asked to do something you've never done before. What did you do to manage the situation?",
+ patterns:["I'd never done ___ before — so honestly, my first step was to say yes, then figure it out.","I found ___, asked ___ for advice, and built a small test first.","Within ___, I delivered ___ — and now it's actually one of my strengths."],
+ keywords:[["figure it out","想辦法搞懂"],["a small test first","先做小規模測試"],["stretch task","超出能力的任務"]],
+ demo:"I'd never deployed a cloud service before — so honestly, my first step was to say yes, then figure it out. I found the official docs, asked a senior on a forum for advice, and built a small test version first. Within a week, I delivered the real deployment — and now cloud deployment is actually one of my strengths.",
+ why:"<p>電面第二關 Leverage。考的是你的<em>學習迴路</em>：資源在哪、跟誰問、怎麼降低風險（small test first）。</p><p>「say yes, then figure it out」展示成長型心態但不魯莽——因為你接著講了具體方法。結尾「now it's one of my strengths」證明學習有複利，正中 Trend of Growth。</p>"},
+
+{id:'p6',cat:'phone',probe:'Efficiency 流程改善',
+ front:"Tell me about a time when you made a process more efficient. What did you do?",
+ patterns:["I noticed we spent ___ hours every week on ___.","So I built ___ to automate the repetitive part.","That cut it down to ___ — time we now spend on ___ instead."],
+ keywords:[["repetitive","重複性的"],["automate","自動化"],["cut it down to","降到"],["free up time","釋放時間"]],
+ demo:"I noticed we spent about five hours every week answering the same citizen questions. So I built a simple auto-reply bot to automate the repetitive part. That cut it down to under one hour — time we now spend on the complicated cases that actually need a human.",
+ why:"<p>Efficiency 題的鐵律：<em>沒有數字就不算 efficiency</em>。before/after 各一個數字（5 小時→1 小時），故事立刻有重量。</p><p>最後一句是高手細節：省下的時間<em>去了哪裡</em>——「花在真正需要人的案子上」證明你懂效率的目的是價值重分配，不是偷懶。</p>"},
+
+{id:'p7',cat:'phone',probe:'Business Acumen 跨部門關係',
+ front:"Tell me about a time when you had to build relationships with people not on your direct team. How did that help you perform your job better?",
+ patterns:["I reached out to ___ before I needed anything from them.","I learned what they cared about: ___.","Later, when I needed ___, they helped right away — because the relationship was already there."],
+ keywords:[["reach out","主動接觸"],["cross-team","跨團隊"],["goodwill","累積的善意"]],
+ demo:"When I started my internship, I reached out to the operations team before I needed anything from them — I just asked how their work connected to ours. I learned what they cared about: fewer last-minute requests. Later, when I needed urgent data for a demo, they helped right away — because the relationship was already there.",
+ why:"<p>核心概念一句話：<em>關係要在需要之前建立</em>（build the well before you're thirsty）。這是 presales 的日常——你永遠需要別的團隊幫忙。</p><p>「I learned what they cared about」是第二個考點：關係不是吃飯聊天，是理解對方的 incentive。這題答好會顯得你遠超新人成熟度。</p>"},
+
+{id:'p8',cat:'phone',probe:'Decision-making 快速決策',
+ front:"Tell me about a time when you had to make a quick decision to resolve a situation. How did you come to your final decision?",
+ patterns:["I had ___ minutes to choose between ___ and ___.","My rule: pick the option that's reversible and lowest-risk.","I went with ___, and afterwards I ___ to double-check it was right."],
+ keywords:[["reversible","可逆的"],["lowest-risk","風險最低的"],["trade-off","取捨"],["double-check","事後驗證"]],
+ demo:"During a live demo, the main feature froze — I had about one minute to choose between restarting everything and switching to my backup recording. My rule: pick the option that's reversible and lowest-risk. I went with the recording, kept the meeting flowing, and afterwards I followed up with a live session to double-check the customer saw everything.",
+ why:"<p>快決策考的不是膽量，是<em>決策原則</em>。說出你的 rule（reversible / lowest-risk）表示你在壓力下有系統，不是碰運氣。</p><p>「afterwards I double-checked」是第二個加分點：快決策＋事後驗證＝負責任的果斷，這正是 Amazon 說的 bias for action 的完整版。</p>"},
+
+{id:'p9',cat:'phone',probe:'Accountability 守承諾',
+ front:"We often make commitments to complete work. When have you made a work commitment to someone and what did you do to make sure it was done on time?",
+ patterns:["I committed to delivering ___ by ___.","To protect the deadline, I did the riskiest part first, and flagged problems early instead of hiding them.","I delivered on time — and they knew the status the whole way through."],
+ keywords:[["commitment","承諾"],["protect the deadline","守住期限"],["flag early","提早示警"],["status update","進度回報"]],
+ demo:"I committed to delivering a working demo to my professor's industry partner by Friday. To protect the deadline, I did the riskiest part first — the API integration — and flagged a data problem early instead of hiding it. I delivered on time — and they knew the status the whole way through, so there were no surprises.",
+ why:"<p>電面第三關 Results。守承諾的滿分公式是兩個習慣：<em>riskiest part first</em>（最大風險先排除）＋ <em>flag early</em>（問題提早說）。</p><p>「no surprises」是外商職場的黃金標準——遲交但提早說，好過準時但驚嚇。這題和 g4（失敗題）是一體兩面，句型可以互通。</p>"},
+
+{id:'p10',cat:'phone',probe:'Time Management 自主管理',
+ front:"Tell me about a time when you had to complete a task with minimum supervision. How did you manage your time?",
+ patterns:["No one was checking on me, so I set my own checkpoints: ___.","Each morning, I started with the most important thing — not the easiest.","I finished ___ early, and my manager only had to review the final result."],
+ keywords:[["minimum supervision","最少監督"],["checkpoint","檢查點"],["self-directed","自我驅動的"]],
+ demo:"For my graduation project, no one was checking on me, so I set my own checkpoints: a working piece every Friday. Each morning, I started with the most important thing — not the easiest. I finished two weeks early, and my professor only had to review the final result.",
+ why:"<p>考點是<em>你自己就是自己的主管</em>。「set my own checkpoints」直接回答了怎麼管理——把外部監督換成自訂節奏。</p><p>「most important, not the easiest」這句非常有力，因為它承認了人性（大家都想先做簡單的）然後展示你反著做。遠端協作時代這題權重越來越高。</p>"},
+
+{id:'p11',cat:'phone',probe:'Growth & Learning 學以致用',
+ front:"Tell me about a time when you learned something new. How did you apply that learning in your work?",
+ patterns:["I learned ___ from ___.","The first place I applied it was ___.","It changed how I ___ — for example, now I always ___."],
+ keywords:[["apply","應用"],["put into practice","付諸實踐"],["changed how I","改變了我…的方式"]],
+ demo:"I learned prompt engineering from building my own AI projects. The first place I applied it was our department's chatbot — I rewrote how it handles unclear questions. It changed how I design any user-facing tool — for example, now I always test with the messiest real inputs first, not the clean ones.",
+ why:"<p>題目重點在後半：<em>how did you APPLY it</em>。只講學了什麼是 60 分，講出應用場景是 80 分，講出「它永久改變了我的做事方式」是滿分。</p><p>學習 → 應用 → 內化成原則，這是三層結構。面試官在找的是「會複利的人」。</p>"},
+
+{id:'p12',cat:'phone',probe:'Goal-setting 目標設定',
+ front:"Tell me about a time when you set a goal for yourself. What was it and how did you achieve that goal?",
+ patterns:["I set a clear goal: ___ by ___.","I broke it into weekly steps: ___, and tracked my progress every ___.","I hit it in ___ — and the habit of ___ stayed with me."],
+ keywords:[["measurable","可衡量的"],["break it into steps","拆成步驟"],["track progress","追蹤進度"]],
+ demo:"I set a clear goal: ship three working AI tools before graduation. I broke it into weekly steps — one feature per week — and tracked my progress every Sunday night. I hit it a month early — and the habit of weekly shipping stayed with me.",
+ why:"<p>好目標的三要素在第一句就要出現：<em>具體、可衡量、有期限</em>。「three tools before graduation」全中。</p><p>「tracked every Sunday night」給故事一個真實的畫面細節——具體到讓人無法懷疑。結尾又是「習慣留下來了」——你會發現這個收尾模式可以通吃一半的 behavioral 題。</p>"},
+
+{id:'p13',cat:'phone',probe:'Inclusivity 營造歸屬感',
+ front:"Working in a welcoming environment is important. Tell me about a time when you created a welcoming environment for a new employee.",
+ patterns:["When ___ joined, I remembered how confusing my own first week was.","So I ___ — small things: ___, and ___.","They told me later that ___."],
+ keywords:[["welcoming","有歸屬感的"],["onboarding","新人融入"],["small things","小細節"]],
+ demo:"When a new intern joined our lab, I remembered how confusing my own first week was. So I made her a one-page 'unofficial guide' — small things: who to ask for what, and which meetings actually matter. They told me later that it made the first week feel safe instead of scary.",
+ why:"<p>電面第四關 Culture Fit（Cisco 很吃這關）。考點是<em>同理心的具體化</em>——「我記得自己第一週的感覺」是完美開場，因為 inclusivity 的起點就是換位。</p><p>答案不用偉大，要「小而具體」：一頁指南、介紹午餐、主動加入群組。越小越真實。</p>"},
+
+{id:'p14',cat:'phone',probe:'Supportiveness 助人方式',
+ front:"Tell me about a time when someone needed your help with something at work. What did you do to handle that situation?",
+ patterns:["A teammate was stuck on ___, and I could see the deadline pressure.","I didn't just give the answer — I walked through it with them, so they could handle it alone next time.","It cost me ___, but the whole team moved faster after that."],
+ keywords:[["stuck","卡住"],["walk through it together","一起走一遍"],["teach, not just tell","教方法不只給答案"]],
+ demo:"A teammate was stuck on a data-cleaning script, and I could see the deadline pressure. I didn't just give the answer — I walked through it with her step by step, so she could handle it alone next time. It cost me an afternoon, but the whole team moved faster after that, because that script came up every month.",
+ why:"<p>考點藏在「how did you handle it」：直接給答案是 70 分，<em>教到對方下次自己會</em>是滿分——因為後者才是可規模化的幫助。</p><p>「It cost me an afternoon, but…」誠實承認代價再講回報，比「我很樂意幫忙」有說服力十倍。</p>"},
+
+{id:'p15',cat:'phone',probe:'Openness 面對反對意見',
+ front:"We've all had moments when someone doesn't agree with an idea we have. Tell me when this happened to you. How did you handle that situation?",
+ patterns:["I proposed ___, and ___ disagreed because ___.","Instead of defending my idea, I asked: 'What am I missing?'","We ended up combining both views — honestly, better than my original idea."],
+ keywords:[["disagree","不同意"],["defend","辯護"],["What am I missing?","我漏了什麼？"],["combine","融合"]],
+ demo:"I proposed using a new framework for our project, and a teammate disagreed because of the learning curve. Instead of defending my idea, I asked: 'What am I missing?' He showed me the timeline risk I'd underestimated. We ended up using the new framework for just one module first — honestly, better than my original idea.",
+ why:"<p>這題考 <em>ego</em>。錯誤示範是「我說服了他」——那是把 openness 題答成 persuasion 題。</p><p>兩個滿分訊號：「What am I missing?」（主動邀請批評）和結尾「better than my original idea」（公開承認別人讓成果變好）。敢講第二句的人，面試官會立刻標記為 low-ego high-confidence。</p>"},
+
+{id:'p16',cat:'phone',probe:'Teamwork 團隊交付',
+ front:"Tell me about a time when you had to work on a team to complete a project. How did you make sure the work was completed on time?",
+ patterns:["Our team of ___ had to deliver ___ by ___.","We split the work by strengths, and I took ___.","When ___ fell behind, I ___ — and we shipped on time."],
+ keywords:[["split by strengths","依強項分工"],["fall behind","進度落後"],["ship on time","準時交付"]],
+ demo:"Our team of four had to deliver a course project in three weeks. We split the work by strengths, and I took the backend plus the weekly progress check. When one part fell behind, I paired up with that teammate for two evenings instead of just reminding him — and we shipped on time.",
+ why:"<p>題目後半是真考點：<em>how did you make sure</em>——所以答案必須有一個「機制」（weekly check）加一個「補救行動」（隊友落後時你做了什麼）。</p><p>「paired up instead of just reminding」是精髓：催促是 manager 心態，下場一起做才是 teammate 心態。新人面試講這個特別加分。</p>"}
+];
+
+// 考點標示（原有卡片；電面卡的 probe 直接寫在卡片裡）
+const PROBES = {
+  g1:'敘事能力 Storytelling', g2:'當責 Ownership', g3:'受教度 Coachability',
+  g4:'誠實究責 Accountability', g5:'自我認知 Self-awareness', g6:'留任意願 Commitment',
+  t1:'技術 trade-off 判斷', t2:'除錯方法論 Methodology', t3:'向非技術者翻譯',
+  t4:'資安基本功 Security 101', t5:'AI / RAG 實戰', t6:'誠實的技術判斷', t7:'臨場應變＋備援紀律',
+  b1:'商業定位認知', b2:'商業量化 TCO', b3:'公司功課 Homework',
+  b4:'商業推進思維', b5:'優先序判斷 Prioritization', b6:'異議處理 Objection handling'
+};
+DEFAULT_CARDS.forEach(c=>{ if(!c.probe && PROBES[c.id]) c.probe = PROBES[c.id]; });
+
+let cards = [];
+let progress = {};
+let notes = {};
+let currentCat = 'all';
+let queue = [];
+let qIndex = 0;
+let currentCard = null;
+let flipped = false;
+let sessionCount = 0;
+let noteSaveTimer = null;
+let mode = 'practice'; // 'practice' | 'scan'
+
+function esc(s){ const d=document.createElement('div'); d.textContent=s; return d.innerHTML; }
+
+function renderBack(c){
+  let html = '';
+  if(c.patterns && c.patterns.length){
+    html += '<div class="b-label">句型骨架 · say it like this</div>';
+    c.patterns.forEach(p=>{ html += '<div class="pattern">'+p+'</div>'; });
+  }
+  if(c.keywords && c.keywords.length){
+    html += '<div class="b-label">關鍵單詞 · keywords</div><div>';
+    c.keywords.forEach(k=>{
+      html += '<span class="kw">'+esc(k[0])+' <small>'+esc(k[1]||'')+'</small></span>';
+    });
+    html += '</div>';
+  }
+  if(c.demo){
+    html += '<div class="b-label">示範回答 · sample</div>';
+    html += '<div class="demo">"'+esc(c.demo)+'"</div>';
+  }
+  if(c.why){
+    html += '<details class="why" onclick="event.stopPropagation()"><summary>為什麼這樣答</summary><div class="why-body">'+c.why+'</div></details>';
+  }
+  // personal notes
+  html += '<div class="notes-box" onclick="event.stopPropagation()">';
+  html += '<div class="b-label note-l">我的版本 · my notes</div>';
+  html += '<textarea id="noteArea" placeholder="用自己的經歷填進句型，寫下你的版本…（自動儲存）"></textarea>';
+  html += '<span class="notes-saved" id="noteSaved">已儲存 ✓</span>';
+  html += '</div>';
+  return html;
+}
+
+async function loadData(){
+  let customCards = [];
+  try{
+    const r = await window.storage.get('custom-cards-v3');
+    if(r && r.value) customCards = JSON.parse(r.value);
+  }catch(e){}
+  try{
+    const r2 = await window.storage.get('progress-v3');
+    if(r2 && r2.value) progress = JSON.parse(r2.value);
+  }catch(e){}
+  try{
+    const rn = await window.storage.get('my-notes');
+    if(rn && rn.value) notes = JSON.parse(rn.value);
+  }catch(e){}
+  try{
+    const r3 = await window.storage.get('session-today');
+    if(r3 && r3.value){
+      const d = JSON.parse(r3.value);
+      if(d.date === new Date().toDateString()) sessionCount = d.count;
+    }
+  }catch(e){}
+  cards = DEFAULT_CARDS.concat(customCards);
+  renderChips();
+  buildQueue();
+  showCard();
+  updateStreak();
+}
+
+function renderChips(){
+  const cats = [['all','全部'],['general','通用'],['tech','技術'],['biz','商業'],['phone','電面'],['presales','presales']];
+  const el = document.getElementById('chips');
+  el.innerHTML = '';
+  cats.forEach(([key,label])=>{
+    const b = document.createElement('button');
+    b.className = 'chip' + (currentCat===key ? ' active':'');
+    b.textContent = label;
+    b.onclick = ()=>{ currentCat=key; renderChips(); buildQueue(); refreshView(); };
+    el.appendChild(b);
+  });
+}
+
+function pool(){
+  return currentCat==='all' ? cards : cards.filter(c=>c.cat===currentCat);
+}
+
+function buildQueue(){
+  queue = pool().slice().sort((a,b)=>{
+    const pa = progress[a.id] ?? 0, pb = progress[b.id] ?? 0;
+    return pa - pb + (Math.random()-0.5);
+  });
+  qIndex = 0;
+}
+
+function showCard(){
+  const prevBtn = document.getElementById('prevBtn');
+  if(queue.length===0){
+    document.getElementById('tag').textContent = '—';
+    document.getElementById('probe').style.display = 'none';
+    document.getElementById('front').textContent = '這個分類還沒有題卡，點下方「+ 新增題卡」！';
+    document.getElementById('back').innerHTML = '';
+    document.getElementById('card').classList.remove('flipped');
+    updateSignal(0);
+    document.getElementById('stat').textContent = '0 / 0';
+    currentCard = null;
+    prevBtn.disabled = true;
+    return;
+  }
+  currentCard = queue[qIndex];
+  flipped = false;
+  document.getElementById('card').classList.remove('flipped');
+  const labels = {general:'通用 behavioral', tech:'技術 technical', biz:'商業 business', phone:'電面 phone screen', presales:'presales 情境'};
+  document.getElementById('tag').textContent = labels[currentCard.cat] || currentCard.cat;
+  const probeEl = document.getElementById('probe');
+  if(currentCard.probe){ probeEl.textContent = '考點 · ' + currentCard.probe; probeEl.style.display = 'inline-block'; }
+  else{ probeEl.style.display = 'none'; }
+  document.getElementById('front').textContent = currentCard.front;
+  document.getElementById('back').innerHTML = renderBack(currentCard);
+  // hydrate note
+  const ta = document.getElementById('noteArea');
+  if(ta){
+    ta.value = notes[currentCard.id] || '';
+    ta.addEventListener('input', onNoteInput);
+  }
+  updateSignal(progress[currentCard.id] ?? 0);
+  document.getElementById('stat').textContent = (qIndex+1) + ' / ' + queue.length;
+  prevBtn.disabled = (qIndex === 0);
+}
+
+function nextCard(){
+  if(queue.length===0) return showCard();
+  qIndex++;
+  if(qIndex >= queue.length){ buildQueue(); } // 一輪結束，重新排序再來
+  showCard();
+}
+
+function prevCard(){
+  if(qIndex > 0){ qIndex--; showCard(); }
+}
+
+function onNoteInput(e){
+  if(!currentCard) return;
+  notes[currentCard.id] = e.target.value;
+  clearTimeout(noteSaveTimer);
+  noteSaveTimer = setTimeout(async ()=>{
+    try{
+      await window.storage.set('my-notes', JSON.stringify(notes));
+      const s = document.getElementById('noteSaved');
+      if(s){ s.classList.add('show'); setTimeout(()=>s.classList.remove('show'), 1200); }
+    }catch(err){ console.error(err); }
+  }, 600);
+}
+
+document.getElementById('card').addEventListener('click', function(e){
+  if(e.target.closest('.notes-box') || e.target.closest('details.why')) return;
+  flip();
+});
+
+// swipe left/right to change cards (only when not scrolling vertically)
+(function(){
+  const card = document.getElementById('card');
+  let sx=0, sy=0;
+  card.addEventListener('touchstart', e=>{
+    sx = e.touches[0].clientX; sy = e.touches[0].clientY;
+  }, {passive:true});
+  card.addEventListener('touchend', e=>{
+    const dx = e.changedTouches[0].clientX - sx;
+    const dy = e.changedTouches[0].clientY - sy;
+    if(Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy)*1.5){
+      dx < 0 ? nextCard() : prevCard();
+    }
+  }, {passive:true});
+})();
+
+// keyboard shortcuts (desktop): space=flip, arrows=nav, 1/2/3=grade
+document.addEventListener('keydown', e=>{
+  const t = e.target.tagName;
+  if(t==='TEXTAREA' || t==='INPUT' || t==='SELECT') return;
+  if(mode!=='practice') return;
+  if(e.key===' '){ e.preventDefault(); flip(); }
+  else if(e.key==='ArrowRight'){ nextCard(); }
+  else if(e.key==='ArrowLeft'){ prevCard(); }
+  else if(e.key==='1'){ grade(0); }
+  else if(e.key==='2'){ grade(1); }
+  else if(e.key==='3'){ grade(2); }
+});
+
+function flip(){
+  if(!currentCard) return;
+  flipped = !flipped;
+  document.getElementById('card').classList.toggle('flipped', flipped);
+}
+
+function updateSignal(level){
+  document.querySelectorAll('.bar').forEach((b,i)=> b.classList.toggle('on', i < level));
+}
+
+async function grade(level){
+  if(!currentCard) return;
+  progress[currentCard.id] = level;
+  updateSignal(level);
+  try{ await window.storage.set('progress-v3', JSON.stringify(progress)); }catch(e){}
+  sessionCount++;
+  try{
+    await window.storage.set('session-today', JSON.stringify({date:new Date().toDateString(), count:sessionCount}));
+  }catch(e){}
+  updateStreak();
+  setTimeout(nextCard, 150);
+}
+
+function updateStreak(){
+  document.getElementById('streak').textContent = '今日已練習 ' + sessionCount + ' 題';
+}
+
+// ================= mode switching (practice / scan / frame) =================
+function setMode(m){
+  mode = (mode === m) ? 'practice' : m; // 再點一次回到練習
+  refreshView();
+}
+
+function refreshView(){
+  const views = { practice:'practiceView', scan:'listView', frame:'frameView' };
+  Object.entries(views).forEach(([m,id])=>{
+    document.getElementById(id).style.display = (mode===m) ? 'block' : 'none';
+  });
+  document.getElementById('scanBtn').classList.toggle('active', mode==='scan');
+  document.getElementById('frameBtn').classList.toggle('active', mode==='frame');
+  if(mode==='scan'){
+    renderList();
+    document.getElementById('stat').textContent = pool().length + ' 張';
+  }else if(mode==='frame'){
+    document.getElementById('stat').textContent = '';
+  }else{
+    showCard();
+  }
+}
+
+function renderList(){
+  const el = document.getElementById('listItems');
+  const labels = {general:'通用', tech:'技術', biz:'商業', phone:'電面', presales:'presales'};
+  el.innerHTML = '';
+  pool().forEach(c=>{
+    const lvl = progress[c.id] ?? 0;
+    const item = document.createElement('div');
+    item.className = 'scan-item';
+    let html = '<div class="scan-head"><div class="dot l'+lvl+'"></div>';
+    html += '<div class="scan-q">'+esc(c.front)+'</div>';
+    html += '<div class="scan-cat">'+ (labels[c.cat]||c.cat) +'</div></div>';
+    if(c.probe) html += '<span class="scan-probe">考點 · '+esc(c.probe)+'</span>';
+    if(c.patterns && c.patterns.length){
+      html += '<div class="scan-p">';
+      c.patterns.forEach(p=>{ html += '<div class="pattern">'+p+'</div>'; });
+      html += '</div>';
+    }
+    if(c.demo) html += '<div class="scan-demo">"'+esc(c.demo)+'"</div>';
+    if(notes[c.id]) html += '<div class="scan-note">📝 '+esc(notes[c.id])+'</div>';
+    item.innerHTML = html;
+    item.onclick = ()=>{ jumpToCard(c.id); };
+    el.appendChild(item);
+  });
+}
+
+function jumpToCard(id){
+  mode = 'practice';
+  buildQueue();
+  const i = queue.findIndex(c=>c.id===id);
+  if(i >= 0) qIndex = i;
+  refreshView();
+}
+
+// ================= new-card modal =================
+function openModal(){ document.getElementById('modalBg').classList.add('open'); }
+function closeModal(){
+  document.getElementById('modalBg').classList.remove('open');
+  ['newFront','newProbe','newPatterns','newKeywords','newDemo','newWhy'].forEach(id=>document.getElementById(id).value='');
+}
+async function saveNewCard(){
+  const cat = document.getElementById('newCat').value;
+  const front = document.getElementById('newFront').value.trim();
+  const probe = document.getElementById('newProbe').value.trim();
+  const patterns = document.getElementById('newPatterns').value.split('\n').map(s=>s.trim()).filter(Boolean).map(esc);
+  const keywords = document.getElementById('newKeywords').value.split(',').map(s=>s.trim()).filter(Boolean).map(k=>[k,'']);
+  const demo = document.getElementById('newDemo').value.trim();
+  const whyRaw = document.getElementById('newWhy').value.trim();
+  const why = whyRaw ? '<p>'+esc(whyRaw)+'</p>' : '';
+  if(!front || patterns.length===0) return;
+  const newCard = { id:'c'+Date.now(), cat, front, probe, patterns, keywords, demo, why };
+  try{
+    await appendCustomCards([newCard]);
+  }catch(e){ console.error(e); }
+  closeModal();
+  buildQueue();
+  refreshView();
+}
+
+async function appendCustomCards(newCards){
+  const r = await window.storage.get('custom-cards-v3');
+  let list = [];
+  if(r && r.value) list = JSON.parse(r.value);
+  list = list.concat(newCards);
+  await window.storage.set('custom-cards-v3', JSON.stringify(list));
+  cards = cards.concat(newCards);
+}
+
+// ================= import / export =================
+function openIO(){ document.getElementById('ioBg').classList.add('open'); setIOMsg(''); }
+function closeIO(){ document.getElementById('ioBg').classList.remove('open'); }
+function setIOMsg(m){ document.getElementById('ioMsg').textContent = m; }
+
+async function exportData(){
+  let customCards = [];
+  try{
+    const r = await window.storage.get('custom-cards-v3');
+    if(r && r.value) customCards = JSON.parse(r.value);
+  }catch(e){}
+  const data = { app:'jastech-v3', exportedAt:new Date().toISOString(), customCards, progress, notes };
+  const json = JSON.stringify(data, null, 1);
+  document.getElementById('ioArea').value = json;
+  try{
+    await navigator.clipboard.writeText(json);
+    setIOMsg('已匯出並複製到剪貼簿 ✓');
+  }catch(e){
+    setIOMsg('已匯出到下方框，請手動全選複製');
+  }
+}
+
+function normalizeCard(c, i){
+  if(!c || typeof c.front!=='string' || !Array.isArray(c.patterns) || c.patterns.length===0) return null;
+  const validCats = ['general','tech','biz','phone','presales'];
+  return {
+    id: 'c'+Date.now()+'_'+i,
+    cat: validCats.includes(c.cat) ? c.cat : 'general',
+    front: c.front,
+    probe: typeof c.probe==='string' ? c.probe : '',
+    patterns: c.patterns.filter(p=>typeof p==='string'),
+    keywords: Array.isArray(c.keywords) ? c.keywords.filter(k=>Array.isArray(k)&&k.length>=1).map(k=>[String(k[0]), String(k[1]||'')]) : [],
+    demo: typeof c.demo==='string' ? c.demo : '',
+    why: typeof c.why==='string' ? c.why : ''
+  };
+}
+
+async function importData(){
+  const raw = document.getElementById('ioArea').value.trim();
+  if(!raw){ setIOMsg('請先貼上 JSON'); return; }
+  let data;
+  try{ data = JSON.parse(raw); }
+  catch(e){ setIOMsg('JSON 格式錯誤：'+e.message); return; }
+
+  try{
+    if(Array.isArray(data)){
+      // AI-generated card array
+      const newCards = data.map(normalizeCard).filter(Boolean);
+      if(newCards.length===0){ setIOMsg('沒有找到有效的卡片（需要 front 和 patterns）'); return; }
+      await appendCustomCards(newCards);
+      setIOMsg('已匯入 '+newCards.length+' 張新卡 ✓');
+    }else if(data && data.app==='jastech-v3'){
+      // full backup: replace custom cards, merge progress & notes
+      const customCards = (data.customCards||[]).filter(c=>c&&c.front&&Array.isArray(c.patterns));
+      await window.storage.set('custom-cards-v3', JSON.stringify(customCards));
+      progress = Object.assign({}, progress, data.progress||{});
+      notes = Object.assign({}, notes, data.notes||{});
+      await window.storage.set('progress-v3', JSON.stringify(progress));
+      await window.storage.set('my-notes', JSON.stringify(notes));
+      cards = DEFAULT_CARDS.concat(customCards);
+      setIOMsg('已還原備份：'+customCards.length+' 張自建卡＋進度＋筆記 ✓');
+    }else{
+      setIOMsg('無法辨識的格式：請貼卡片 array 或本工具的匯出檔');
+      return;
+    }
+    buildQueue();
+    refreshView();
+  }catch(e){ setIOMsg('匯入失敗：'+e.message); }
+}
+
+const AI_PROMPT = `你是一位外商 presales / sales engineer 面試教練。請幫我生成 6 張英文面試練習卡。
+
+對象：應屆畢業生，目標是 Cisco / Microsoft / UiPath 等級外商的 presales / SE 職位。
+主題：（在這裡填你想練的主題，例如：資安基礎、雲端架構、客戶異議處理）
+
+每張卡的設計原則：
+- front 是面試官會說的英文問題：真實、有難度、口語（這是聽力輸入）
+- probe 是這題的考點：一句話標明面試官在測什麼（例：Ownership 當責、Ambiguity 面對模糊）
+- patterns 是簡單可重用的英文句型骨架，用 ___ 標示填空處（這是口說輸出）——聽的難、說的簡單
+- patterns 必須遵守答題框架：behavioral 題用 STAR-L（場景一句→任務一句→行動 2-3 句→結果一句含數字→學到什麼一句）；觀點/技術題用金字塔（The short answer is ___ → 理由編號 → For example ___ → 收回結論）
+- 善用起承轉合連結詞：At the time / So what I did was / But here's the thing / As a result / The takeaway is
+- demo 是只用上述句型組成的完整示範回答，長度約 30-45 秒口說
+- why 用繁體中文解釋這樣答的策略和面試官真正在測什麼，可用 <em> 標示重點、<p> 分段
+
+請只輸出一個 JSON array（不要 markdown code fence 以外的文字），每張卡的格式：
+{"cat":"general 或 tech 或 biz 或 phone 或 presales","front":"...","probe":"考點","patterns":["...","..."],"keywords":[["英文詞","中文註解"]],"demo":"...","why":"<p>...</p>"}`;
+
+async function copyAIPrompt(){
+  try{
+    await navigator.clipboard.writeText(AI_PROMPT);
+    setIOMsg('AI 出題 prompt 已複製 ✓ 貼到 Claude/ChatGPT，把回傳 JSON 貼回來按匯入');
+  }catch(e){
+    document.getElementById('ioArea').value = AI_PROMPT;
+    setIOMsg('已放到下方框，請手動複製');
+  }
+}
+
+loadData();
+</script>
+</body>
+</html>
