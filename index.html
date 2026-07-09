@@ -196,6 +196,70 @@
   .btn-save{ background:var(--accent); color:#16212B; font-weight:600;}
   .btn-alt{ background:var(--surface-2); color:var(--accent-2); border:1px solid var(--border) !important;}
   .io-msg{ font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--accent-2); min-height:16px; margin-bottom:8px;}
+
+  /* ===== 每日目標進度條 ===== */
+  .goal-bar{ display:flex; align-items:center; gap:10px; margin-bottom:14px; }
+  .goal-track{ flex:1; height:8px; border-radius:4px; background:var(--surface-2); overflow:hidden; }
+  .goal-fill{
+    height:100%; width:0%; border-radius:4px;
+    background:linear-gradient(90deg, var(--accent), var(--accent-2));
+    transition:width .4s ease;
+  }
+  .goal-fill.done{ background:linear-gradient(90deg, var(--accent-2), #7EE8A2); }
+  .goal-text{ font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--text-dim); white-space:nowrap; }
+  .goal-text b{ color:var(--accent-2); font-weight:500; }
+
+  /* streak flame in header */
+  .flame{
+    font-family:'IBM Plex Mono',monospace; font-size:12px; color:var(--accent);
+    cursor:pointer; background:transparent; border:1px solid var(--border);
+    border-radius:20px; padding:6px 11px; white-space:nowrap;
+  }
+
+  /* ===== toast ===== */
+  .toast{
+    position:fixed; left:50%; bottom:30px; transform:translateX(-50%) translateY(80px);
+    background:var(--surface-2); border:1px solid var(--accent); border-radius:12px;
+    padding:12px 18px; font-size:14px; color:var(--text); z-index:50;
+    display:flex; align-items:center; gap:10px; opacity:0; pointer-events:none;
+    transition:all .35s cubic-bezier(.2,.9,.3,1.2); box-shadow:0 8px 30px rgba(0,0,0,0.45);
+    max-width:90vw;
+  }
+  .toast.show{ transform:translateX(-50%) translateY(0); opacity:1; }
+  .toast .t-emoji{ font-size:22px; }
+  .toast .t-title{ font-weight:600; font-size:14px; }
+  .toast .t-sub{ font-size:12px; color:var(--text-dim); }
+
+  /* ===== confetti ===== */
+  .confetti{ position:fixed; top:-10px; z-index:60; pointer-events:none; font-size:18px; animation:fall linear forwards; }
+  @keyframes fall{ to{ transform:translateY(105vh) rotate(720deg); opacity:0.6; } }
+
+  /* ===== achievements & stats modal ===== */
+  .ach-grid{ display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:14px; }
+  .ach{
+    background:var(--surface-2); border:1px solid var(--border); border-radius:10px;
+    padding:10px 12px; display:flex; gap:9px; align-items:flex-start;
+  }
+  .ach.locked{ opacity:0.38; filter:grayscale(0.8); }
+  .ach .a-emoji{ font-size:20px; }
+  .ach .a-name{ font-size:12.5px; font-weight:600; }
+  .ach .a-desc{ font-size:11px; color:var(--text-dim); line-height:1.4; margin-top:2px; }
+  .stats-row{ display:flex; gap:8px; margin-bottom:12px; }
+  .stat-box{
+    flex:1; background:var(--surface-2); border:1px solid var(--border); border-radius:10px;
+    padding:10px; text-align:center;
+  }
+  .stat-box .n{ font-family:'Space Grotesk',sans-serif; font-size:20px; font-weight:700; color:var(--accent); }
+  .stat-box .l{ font-size:10.5px; color:var(--text-dim); margin-top:2px; }
+  .week-bars{ display:flex; gap:6px; align-items:flex-end; height:56px; margin:4px 0 2px; }
+  .wb{ flex:1; display:flex; flex-direction:column; align-items:center; gap:4px; height:100%; justify-content:flex-end; }
+  .wb .wbar{ width:100%; max-width:26px; border-radius:4px 4px 0 0; background:var(--accent-2); opacity:0.85; min-height:2px; }
+  .wb .wl{ font-family:'IBM Plex Mono',monospace; font-size:9px; color:var(--text-dim); }
+  .wb.today .wbar{ background:var(--accent); }
+  .mastery{ display:flex; height:10px; border-radius:5px; overflow:hidden; margin:4px 0 2px; background:var(--surface-2); }
+  .mastery div{ height:100%; }
+  .m-legend{ display:flex; gap:12px; font-size:10.5px; color:var(--text-dim); font-family:'IBM Plex Mono',monospace; margin-top:4px;}
+  .m-legend i{ display:inline-block; width:8px; height:8px; border-radius:2px; margin-right:4px; font-style:normal;}
 </style>
 </head>
 <body>
@@ -204,10 +268,16 @@
     <h1>jas<span>tech</span></h1>
     <div class="hdr-right">
       <div class="stat" id="stat">0 / 0</div>
+      <button class="flame" id="flameBtn" onclick="openAch()" title="連續練習天數・成就">🔥 0</button>
       <button class="mode-btn" id="scanBtn" onclick="setMode('scan')">☰ 快掃</button>
       <button class="mode-btn" id="frameBtn" onclick="setMode('frame')">📐 框架</button>
     </div>
   </header>
+
+  <div class="goal-bar">
+    <div class="goal-track"><div class="goal-fill" id="goalFill"></div></div>
+    <span class="goal-text" id="goalText">今日 0 / 5</span>
+  </div>
 
   <div class="chips" id="chips"></div>
 
@@ -324,6 +394,36 @@
       <button class="btn-save" onclick="saveNewCard()">儲存</button>
     </div>
   </div>
+</div>
+
+<div class="modal-bg" id="achBg" onclick="if(event.target===this)closeAch()">
+  <div class="modal">
+    <h3>🏆 我的練習成果</h3>
+    <div class="stats-row">
+      <div class="stat-box"><div class="n" id="stStreak">0</div><div class="l">連續天數 🔥</div></div>
+      <div class="stat-box"><div class="n" id="stTotal">0</div><div class="l">累計練習題數</div></div>
+      <div class="stat-box"><div class="n" id="stMaster">0</div><div class="l">已熟悉題卡</div></div>
+    </div>
+    <div class="b-label">近 7 天練習量</div>
+    <div class="week-bars" id="weekBars"></div>
+    <div class="b-label">掌握度分布</div>
+    <div class="mastery" id="masteryBar"></div>
+    <div class="m-legend">
+      <span><i style="background:var(--again)"></i>待加強</span>
+      <span><i style="background:var(--accent)"></i>普通</span>
+      <span><i style="background:var(--accent-2)"></i>熟悉</span>
+    </div>
+    <div class="b-label" style="margin-top:16px">成就徽章</div>
+    <div class="ach-grid" id="achGrid"></div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeAch()">關閉</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast">
+  <span class="t-emoji" id="toastEmoji">🏆</span>
+  <span><div class="t-title" id="toastTitle"></div><div class="t-sub" id="toastSub"></div></span>
 </div>
 
 <div class="modal-bg" id="ioBg">
@@ -691,6 +791,18 @@ async function loadData(){
       if(d.date === new Date().toDateString()) sessionCount = d.count;
     }
   }catch(e){}
+  try{
+    const rd = await window.storage.get('daily-log');
+    if(rd && rd.value) dailyLog = JSON.parse(rd.value);
+  }catch(e){}
+  try{
+    const ra = await window.storage.get('achievements');
+    if(ra && ra.value) achUnlocked = JSON.parse(ra.value);
+  }catch(e){}
+  try{
+    const rt = await window.storage.get('total-graded');
+    if(rt && rt.value) totalGraded = parseInt(rt.value, 10) || 0;
+  }catch(e){}
   cards = DEFAULT_CARDS.concat(customCards);
   renderChips();
   buildQueue();
@@ -835,13 +947,179 @@ async function grade(level){
   try{
     await window.storage.set('session-today', JSON.stringify({date:new Date().toDateString(), count:sessionCount}));
   }catch(e){}
+  await recordPractice();
   updateStreak();
   setTimeout(nextCard, 150);
 }
 
 function updateStreak(){
   document.getElementById('streak').textContent = '今日已練習 ' + sessionCount + ' 題';
+  // goal bar
+  const pct = Math.min(100, sessionCount / DAILY_GOAL * 100);
+  const fill = document.getElementById('goalFill');
+  fill.style.width = pct + '%';
+  fill.classList.toggle('done', sessionCount >= DAILY_GOAL);
+  document.getElementById('goalText').innerHTML = sessionCount >= DAILY_GOAL
+    ? '今日達標 <b>✓ ' + sessionCount + ' 題</b>'
+    : '今日 <b>' + sessionCount + '</b> / ' + DAILY_GOAL;
+  document.getElementById('flameBtn').textContent = '🔥 ' + calcStreak();
 }
+
+// ================= daily log / streak / achievements =================
+const DAILY_GOAL = 5;
+let dailyLog = {};   // { 'YYYY-MM-DD': count }
+let achUnlocked = {}; // { id: dateStr }
+let totalGraded = 0;
+
+function todayKey(d){
+  d = d || new Date();
+  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+}
+
+function calcStreak(){
+  let s = 0;
+  const d = new Date();
+  // 今天還沒練不打斷 streak，從今天或昨天開始往回數
+  if(!dailyLog[todayKey(d)]) d.setDate(d.getDate()-1);
+  while(dailyLog[todayKey(d)] > 0){ s++; d.setDate(d.getDate()-1); }
+  return s;
+}
+
+async function recordPractice(){
+  const k = todayKey();
+  const before = dailyLog[k] || 0;
+  dailyLog[k] = before + 1;
+  totalGraded++;
+  try{
+    await window.storage.set('daily-log', JSON.stringify(dailyLog));
+    await window.storage.set('total-graded', String(totalGraded));
+  }catch(e){}
+  if(before + 1 === DAILY_GOAL){
+    confetti();
+    toast('🎯', '今日達標！', '連續 ' + calcStreak() + ' 天，明天見 👋');
+  }
+  checkAchievements();
+}
+
+const ACHIEVEMENTS = [
+  {id:'first',   emoji:'🌱', name:'第一步',   desc:'完成第一題練習',            test:()=> totalGraded >= 1},
+  {id:'goal1',   emoji:'🎯', name:'今日達標', desc:'單日練習 ' + 5 + ' 題',      test:()=> (dailyLog[todayKey()]||0) >= DAILY_GOAL},
+  {id:'streak3', emoji:'🔥', name:'三日之約', desc:'連續練習 3 天',             test:()=> calcStreak() >= 3},
+  {id:'streak7', emoji:'⚡', name:'週週不斷', desc:'連續練習 7 天',             test:()=> calcStreak() >= 7},
+  {id:'streak30',emoji:'👑', name:'月度堅持', desc:'連續練習 30 天',            test:()=> calcStreak() >= 30},
+  {id:'total50', emoji:'💪', name:'五十題斬', desc:'累計練習 50 題',            test:()=> totalGraded >= 50},
+  {id:'total200',emoji:'🏅', name:'兩百題斬', desc:'累計練習 200 題',           test:()=> totalGraded >= 200},
+  {id:'master10',emoji:'🧠', name:'漸入佳境', desc:'10 張題卡標記為熟悉',       test:()=> Object.values(progress).filter(v=>v===2).length >= 10},
+  {id:'catFull', emoji:'🏆', name:'分類制霸', desc:'任一分類全部熟悉',          test:()=>{
+    const cats = {};
+    cards.forEach(c=>{ (cats[c.cat] = cats[c.cat]||[]).push(c); });
+    return Object.values(cats).some(list => list.length>0 && list.every(c=>progress[c.id]===2));
+  }},
+  {id:'note5',   emoji:'📝', name:'筆記家',   desc:'寫下 5 則我的版本',         test:()=> Object.values(notes).filter(v=>v && v.trim()).length >= 5},
+  {id:'custom1', emoji:'✍️', name:'出題人',   desc:'新增第一張自建卡',          test:()=> cards.length > DEFAULT_CARDS.length},
+];
+
+async function checkAchievements(){
+  let changed = false;
+  for(const a of ACHIEVEMENTS){
+    if(!achUnlocked[a.id] && a.test()){
+      achUnlocked[a.id] = todayKey();
+      changed = true;
+      toast(a.emoji, '解鎖成就：' + a.name, a.desc);
+    }
+  }
+  if(changed){
+    try{ await window.storage.set('achievements', JSON.stringify(achUnlocked)); }catch(e){}
+  }
+}
+
+// toast queue（多個成就同時解鎖時依序顯示）
+let toastQueue = [], toastBusy = false;
+function toast(emoji, title, sub){
+  toastQueue.push([emoji, title, sub]);
+  if(!toastBusy) nextToast();
+}
+function nextToast(){
+  if(toastQueue.length === 0){ toastBusy = false; return; }
+  toastBusy = true;
+  const [emoji, title, sub] = toastQueue.shift();
+  document.getElementById('toastEmoji').textContent = emoji;
+  document.getElementById('toastTitle').textContent = title;
+  document.getElementById('toastSub').textContent = sub;
+  const t = document.getElementById('toast');
+  t.classList.add('show');
+  setTimeout(()=>{ t.classList.remove('show'); setTimeout(nextToast, 350); }, 2600);
+}
+
+function confetti(){
+  const emojis = ['🎉','✨','🎊','⭐','💫'];
+  for(let i=0;i<24;i++){
+    const s = document.createElement('span');
+    s.className = 'confetti';
+    s.textContent = emojis[Math.floor(Math.random()*emojis.length)];
+    s.style.left = Math.random()*100 + 'vw';
+    s.style.animationDuration = (1.6 + Math.random()*1.6) + 's';
+    s.style.animationDelay = (Math.random()*0.4) + 's';
+    document.body.appendChild(s);
+    setTimeout(()=>s.remove(), 4000);
+  }
+}
+
+// ================= achievements / stats modal =================
+function openAch(){
+  document.getElementById('stStreak').textContent = calcStreak();
+  document.getElementById('stTotal').textContent = totalGraded;
+  const mastered = Object.values(progress).filter(v=>v===2).length;
+  document.getElementById('stMaster').textContent = mastered + ' / ' + cards.length;
+
+  // 近 7 天長條
+  const wb = document.getElementById('weekBars');
+  wb.innerHTML = '';
+  const days = [];
+  for(let i=6;i>=0;i--){
+    const d = new Date(); d.setDate(d.getDate()-i);
+    days.push([todayKey(d), d.getDay(), i===0]);
+  }
+  const wl = ['日','一','二','三','四','五','六'];
+  const max = Math.max(DAILY_GOAL, ...days.map(([k])=>dailyLog[k]||0));
+  days.forEach(([k, dow, isToday])=>{
+    const n = dailyLog[k]||0;
+    const div = document.createElement('div');
+    div.className = 'wb' + (isToday?' today':'');
+    const h = n===0 ? 2 : Math.max(6, Math.round(n/max*40));
+    div.innerHTML = '<div class="wbar" style="height:'+h+'px'+(n===0?';opacity:0.25':'')+'" title="'+n+' 題"></div><div class="wl">'+wl[dow]+'</div>';
+    wb.appendChild(div);
+  });
+
+  // 掌握度
+  const counts = [0,0,0];
+  cards.forEach(c=>{ counts[progress[c.id] ?? 0]++; });
+  const total = cards.length || 1;
+  const colors = ['var(--again)','var(--accent)','var(--accent-2)'];
+  const mb = document.getElementById('masteryBar');
+  mb.innerHTML = '';
+  counts.forEach((n,i)=>{
+    const d = document.createElement('div');
+    d.style.width = (n/total*100) + '%';
+    d.style.background = colors[i];
+    d.title = n + ' 張';
+    mb.appendChild(d);
+  });
+
+  // 徽章
+  const grid = document.getElementById('achGrid');
+  grid.innerHTML = '';
+  ACHIEVEMENTS.forEach(a=>{
+    const unlocked = !!achUnlocked[a.id];
+    const div = document.createElement('div');
+    div.className = 'ach' + (unlocked?'':' locked');
+    div.innerHTML = '<span class="a-emoji">'+a.emoji+'</span><span><div class="a-name">'+a.name+'</div><div class="a-desc">'+a.desc+(unlocked?'<br>✓ '+achUnlocked[a.id]:'')+'</div></span>';
+    grid.appendChild(div);
+  });
+
+  document.getElementById('achBg').classList.add('open');
+}
+function closeAch(){ document.getElementById('achBg').classList.remove('open'); }
 
 // ================= mode switching (practice / scan / frame) =================
 function setMode(m){
@@ -944,7 +1222,7 @@ async function exportData(){
     const r = await window.storage.get('custom-cards-v3');
     if(r && r.value) customCards = JSON.parse(r.value);
   }catch(e){}
-  const data = { app:'jastech-v3', exportedAt:new Date().toISOString(), customCards, progress, notes };
+  const data = { app:'jastech-v3', exportedAt:new Date().toISOString(), customCards, progress, notes, dailyLog, achievements:achUnlocked, totalGraded };
   const json = JSON.stringify(data, null, 1);
   document.getElementById('ioArea').value = json;
   try{
@@ -992,7 +1270,11 @@ async function importData(){
       notes = Object.assign({}, notes, data.notes||{});
       await window.storage.set('progress-v3', JSON.stringify(progress));
       await window.storage.set('my-notes', JSON.stringify(notes));
+      if(data.dailyLog){ dailyLog = Object.assign({}, dailyLog, data.dailyLog); await window.storage.set('daily-log', JSON.stringify(dailyLog)); }
+      if(data.achievements){ achUnlocked = Object.assign({}, achUnlocked, data.achievements); await window.storage.set('achievements', JSON.stringify(achUnlocked)); }
+      if(typeof data.totalGraded === 'number' && data.totalGraded > totalGraded){ totalGraded = data.totalGraded; await window.storage.set('total-graded', String(totalGraded)); }
       cards = DEFAULT_CARDS.concat(customCards);
+      updateStreak();
       setIOMsg('已還原備份：'+customCards.length+' 張自建卡＋進度＋筆記 ✓');
     }else{
       setIOMsg('無法辨識的格式：請貼卡片 array 或本工具的匯出檔');
