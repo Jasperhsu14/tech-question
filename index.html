@@ -260,6 +260,48 @@
   .mastery div{ height:100%; }
   .m-legend{ display:flex; gap:12px; font-size:10.5px; color:var(--text-dim); font-family:'IBM Plex Mono',monospace; margin-top:4px;}
   .m-legend i{ display:inline-block; width:8px; height:8px; border-radius:2px; margin-right:4px; font-style:normal;}
+
+  /* ===== 口說模式 ===== */
+  .speak-panel{
+    margin-top:10px; background:var(--surface); border:1px solid var(--border);
+    border-radius:12px; padding:14px 14px 12px;
+  }
+  .speak-btn{
+    width:100%; padding:13px 0; border-radius:10px; border:none; cursor:pointer;
+    background:rgba(226,114,91,0.18); color:var(--again);
+    font-family:'IBM Plex Sans',sans-serif; font-weight:600; font-size:14px;
+  }
+  .speak-btn.recording{ background:var(--again); color:#fff; animation:pulse 1.2s infinite; }
+  @keyframes pulse{ 0%,100%{opacity:1;} 50%{opacity:0.75;} }
+  .speak-status{
+    font-family:'IBM Plex Mono',monospace; font-size:12px; color:var(--text-dim);
+    text-align:center; margin:8px 0 0; min-height:16px;
+  }
+  .speak-status b{ color:var(--again); font-size:16px; }
+  .transcript{
+    margin-top:10px; background:var(--surface-2); border-radius:8px; padding:10px 12px;
+    font-size:13.5px; line-height:1.7; color:var(--text); display:none;
+  }
+  .transcript mark{
+    background:rgba(94,201,192,0.25); color:var(--accent-2); border-radius:4px; padding:0 3px;
+    font-weight:600;
+  }
+  .speak-report{ margin-top:8px; font-size:12.5px; color:var(--text-dim); line-height:1.6; display:none; }
+  .speak-report .hit{ color:var(--accent-2); }
+  .speak-report .miss{ color:var(--text-dim); opacity:0.75; }
+  .speak-report .chip-c{ display:inline-block; font-family:'IBM Plex Mono',monospace; font-size:11px;
+    border:1px solid var(--border); border-radius:5px; padding:2px 7px; margin:2px 4px 2px 0; }
+  .speak-report .chip-c.hit{ border-color:var(--accent-2); }
+
+  /* ===== 我的故事 ===== */
+  .story-item{
+    background:var(--surface-2); border:1px solid var(--border); border-radius:10px;
+    padding:10px 12px; margin-bottom:8px;
+  }
+  .story-item .s-title{ font-weight:600; font-size:13.5px; display:flex; justify-content:space-between; gap:8px; align-items:center;}
+  .story-item .s-text{ font-size:12.5px; color:var(--text-dim); line-height:1.6; margin-top:4px; white-space:pre-wrap;}
+  .story-item .s-del{ background:none; border:none; color:var(--again); cursor:pointer; font-size:12px; font-family:'IBM Plex Mono',monospace; flex:none;}
+  .story-empty{ font-size:12.5px; color:var(--text-dim); line-height:1.7; margin-bottom:10px;}
 </style>
 </head>
 <body>
@@ -303,6 +345,13 @@
     <div class="nav">
       <button id="prevBtn" onclick="prevCard()">‹ 上一題</button>
       <button id="nextBtn" onclick="nextCard()">下一題 ›</button>
+    </div>
+
+    <div class="speak-panel">
+      <button class="speak-btn" id="speakBtn" onclick="toggleSpeak()">🎤 口說練習 — 聽題目，開口答 60 秒</button>
+      <div class="speak-status" id="speakStatus"></div>
+      <div class="transcript" id="transcript"></div>
+      <div class="speak-report" id="speakReport"></div>
     </div>
   </div>
 
@@ -367,6 +416,7 @@
   <div class="footer">
     <span class="streak" id="streak">今日已練習 0 題</span>
     <span>
+      <button class="io-btn" onclick="openStories()">📖 我的故事</button>
       <button class="io-btn" onclick="openIO()">⇅ 匯入匯出</button>
       <button class="add-btn" onclick="openModal()">+ 新增題卡</button>
     </span>
@@ -382,6 +432,7 @@
       <option value="biz">商業 Business</option>
       <option value="phone">電面 Phone Screen</option>
       <option value="presales">Presales 情境</option>
+      <option value="mine">我的故事</option>
     </select>
     <textarea id="newFront" rows="2" placeholder="題目（面試官會說的話，可以難）"></textarea>
     <input id="newProbe" placeholder="考點（這題在測什麼，選填）">
@@ -417,6 +468,20 @@
     <div class="ach-grid" id="achGrid"></div>
     <div class="modal-actions">
       <button class="btn-cancel" onclick="closeAch()">關閉</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-bg" id="storyBg" onclick="if(event.target===this)closeStories()">
+  <div class="modal">
+    <h3>📖 我的故事庫</h3>
+    <p class="io-hint">把你的真實經歷寫在這裡（中文即可）。之後按「複製 AI 出題 prompt」時，故事會自動附在 prompt 裡，AI 會把它們改寫成<b>超簡單用詞、架構精準</b>的英文回答，生成專屬你的題卡（分類：我的）。</p>
+    <div id="storyList"></div>
+    <input id="storyTitle" placeholder="故事標題（例：實習時救回延期的專案）">
+    <textarea id="storyText" rows="4" placeholder="故事內容：發生什麼、你做了什麼、結果如何、學到什麼。中文流水帳沒關係，越具體越好（有數字更好）。"></textarea>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeStories()">關閉</button>
+      <button class="btn-save" onclick="saveStory()">＋ 存這則故事</button>
     </div>
   </div>
 </div>
@@ -803,6 +868,14 @@ async function loadData(){
     const rt = await window.storage.get('total-graded');
     if(rt && rt.value) totalGraded = parseInt(rt.value, 10) || 0;
   }catch(e){}
+  try{
+    const rs = await window.storage.get('my-stories');
+    if(rs && rs.value) stories = JSON.parse(rs.value);
+  }catch(e){}
+  try{
+    const rc = await window.storage.get('spoken-count');
+    if(rc && rc.value) spokenCount = parseInt(rc.value, 10) || 0;
+  }catch(e){}
   cards = DEFAULT_CARDS.concat(customCards);
   renderChips();
   buildQueue();
@@ -811,7 +884,7 @@ async function loadData(){
 }
 
 function renderChips(){
-  const cats = [['all','全部'],['general','通用'],['tech','技術'],['biz','商業'],['phone','電面'],['presales','presales']];
+  const cats = [['all','全部'],['general','通用'],['tech','技術'],['biz','商業'],['phone','電面'],['presales','presales'],['mine','我的']];
   const el = document.getElementById('chips');
   el.innerHTML = '';
   cats.forEach(([key,label])=>{
@@ -852,7 +925,7 @@ function showCard(){
   currentCard = queue[qIndex];
   flipped = false;
   document.getElementById('card').classList.remove('flipped');
-  const labels = {general:'通用 behavioral', tech:'技術 technical', biz:'商業 business', phone:'電面 phone screen', presales:'presales 情境'};
+  const labels = {general:'通用 behavioral', tech:'技術 technical', biz:'商業 business', phone:'電面 phone screen', presales:'presales 情境', mine:'我的故事 my stories'};
   document.getElementById('tag').textContent = labels[currentCard.cat] || currentCard.cat;
   const probeEl = document.getElementById('probe');
   if(currentCard.probe){ probeEl.textContent = '考點 · ' + currentCard.probe; probeEl.style.display = 'inline-block'; }
@@ -1017,6 +1090,9 @@ const ACHIEVEMENTS = [
   }},
   {id:'note5',   emoji:'📝', name:'筆記家',   desc:'寫下 5 則我的版本',         test:()=> Object.values(notes).filter(v=>v && v.trim()).length >= 5},
   {id:'custom1', emoji:'✍️', name:'出題人',   desc:'新增第一張自建卡',          test:()=> cards.length > DEFAULT_CARDS.length},
+  {id:'speak1',  emoji:'🎤', name:'開口了',   desc:'完成第一次口說練習',        test:()=> spokenCount >= 1},
+  {id:'speak30', emoji:'🗣️', name:'越說越順', desc:'累計口說 30 次',            test:()=> spokenCount >= 30},
+  {id:'story3',  emoji:'📖', name:'說書人',   desc:'故事庫存 3 則故事',         test:()=> stories.length >= 3},
 ];
 
 async function checkAchievements(){
@@ -1121,6 +1197,201 @@ function openAch(){
 }
 function closeAch(){ document.getElementById('achBg').classList.remove('open'); }
 
+// ================= 口說模式 =================
+// 流程：TTS 念題（聽力輸入）→ 倒數 3 秒 → 錄 60 秒（語音辨識轉文字）→ 標出用到的骨架連結詞
+const CONNECTORS = [
+  ['the short answer', '答案先行'],
+  ['at the time', '設場景'],
+  ['my job was', '任務'],
+  ['so what i did', '講行動'],
+  ['first', 'First…'],
+  ['second', 'Second…'],
+  ['for example', '舉例'],
+  ['as a result', '收結果'],
+  ['in the end', '收結果'],
+  ['i learned', '學到什麼'],
+  ['the takeaway', '學到什麼'],
+  ["but here's the thing", '轉折'],
+  ['the tricky part', '轉折'],
+  ['instead of', '轉折'],
+  ['that said', '轉折'],
+];
+const SPEAK_SECONDS = 60;
+let speakState = 'idle'; // idle | reading | countdown | recording
+let recog = null, speakTimer = null, speakLeft = 0, finalText = '';
+let spokenCount = 0;
+
+function speakStatus(html){ document.getElementById('speakStatus').innerHTML = html; }
+
+function pickEnVoice(){
+  const vs = speechSynthesis.getVoices();
+  return vs.find(v=>/en[-_]US/i.test(v.lang)) || vs.find(v=>/^en/i.test(v.lang)) || null;
+}
+
+function toggleSpeak(){
+  if(speakState === 'recording'){ stopRecording(); return; }
+  if(speakState !== 'idle') return;
+  if(!currentCard) return;
+  document.getElementById('transcript').style.display = 'none';
+  document.getElementById('speakReport').style.display = 'none';
+  // 1) TTS 念題
+  speakState = 'reading';
+  document.getElementById('speakBtn').textContent = '🔊 面試官提問中…';
+  speakStatus('仔細聽，就像真的面試');
+  try{ speechSynthesis.cancel(); }catch(e){}
+  const u = new SpeechSynthesisUtterance(currentCard.front);
+  u.lang = 'en-US'; u.rate = 0.95;
+  const v = pickEnVoice(); if(v) u.voice = v;
+  u.onend = startCountdown;
+  u.onerror = startCountdown;
+  speechSynthesis.speak(u);
+}
+
+function startCountdown(){
+  if(speakState !== 'reading') return;
+  speakState = 'countdown';
+  let n = 3;
+  speakStatus('<b>' + n + '</b> 秒後開始…整理一下架構');
+  const iv = setInterval(()=>{
+    n--;
+    if(n > 0){ speakStatus('<b>' + n + '</b> 秒後開始…'); }
+    else{ clearInterval(iv); startRecording(); }
+  }, 1000);
+}
+
+function startRecording(){
+  speakState = 'recording';
+  finalText = '';
+  speakLeft = SPEAK_SECONDS;
+  const btn = document.getElementById('speakBtn');
+  btn.textContent = '⏹ 講完了，按這裡結束';
+  btn.classList.add('recording');
+
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if(SR){
+    recog = new SR();
+    recog.lang = 'en-US'; recog.continuous = true; recog.interimResults = true;
+    recog.onresult = e=>{
+      let interim = '';
+      for(let i=e.resultIndex; i<e.results.length; i++){
+        if(e.results[i].isFinal) finalText += e.results[i][0].transcript + ' ';
+        else interim += e.results[i][0].transcript;
+      }
+      const t = document.getElementById('transcript');
+      t.style.display = 'block';
+      t.innerHTML = esc(finalText) + '<span style="opacity:0.5">' + esc(interim) + '</span>';
+    };
+    recog.onerror = e=>{
+      if(e.error==='not-allowed'){ speakStatus('麥克風被拒絕——請允許麥克風權限後重試'); stopRecording(true); }
+    };
+    try{ recog.start(); }catch(e){}
+  }else{
+    speakStatus('此瀏覽器不支援語音辨識，改用純計時模式（建議用 Chrome / Edge / Safari）');
+  }
+
+  speakTimer = setInterval(()=>{
+    speakLeft--;
+    speakStatus('🔴 錄音中 <b>' + speakLeft + '</b> 秒 — 不要停超過 3 秒！');
+    if(speakLeft <= 0) stopRecording();
+  }, 1000);
+  speakStatus('🔴 錄音中 <b>' + speakLeft + '</b> 秒 — 開口！');
+}
+
+async function stopRecording(aborted){
+  clearInterval(speakTimer);
+  if(recog){ try{ recog.stop(); }catch(e){} recog = null; }
+  const btn = document.getElementById('speakBtn');
+  btn.classList.remove('recording');
+  btn.textContent = '🎤 再說一次（同一題重講最有效）';
+  speakState = 'idle';
+  if(aborted) return;
+
+  // 稍等辨識收尾
+  await new Promise(r=>setTimeout(r, 700));
+  const said = finalText.trim();
+  const spoke = SPEAK_SECONDS - speakLeft;
+  speakStatus('說了 ' + spoke + ' 秒');
+
+  if(said){
+    // 標出連結詞
+    const low = said.toLowerCase();
+    const hits = [], misses = [];
+    const seen = new Set();
+    CONNECTORS.forEach(([phrase, label])=>{
+      if(seen.has(label)) return;
+      if(low.includes(phrase)){ hits.push([phrase,label]); seen.add(label); }
+    });
+    // 高亮 transcript
+    let html = esc(said);
+    hits.forEach(([phrase])=>{
+      html = html.replace(new RegExp('('+phrase.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','gi'), '<mark>$1</mark>');
+    });
+    const t = document.getElementById('transcript');
+    t.style.display = 'block';
+    t.innerHTML = html;
+
+    const core = ['答案先行','設場景','講行動','舉例','收結果','學到什麼'];
+    const hitLabels = new Set(hits.map(h=>h[1]));
+    let report = '骨架檢查：';
+    core.forEach(label=>{
+      report += '<span class="chip-c '+(hitLabels.has(label)?'hit':'miss')+'">'+(hitLabels.has(label)?'✓ ':'· ')+label+'</span>';
+    });
+    report += '<br>用到 <span class="hit">' + hits.length + '</span> 個骨架連結詞';
+    if(hits.length < 3) report += ' — 翻卡看 patterns，同一題再講一次！';
+    else report += ' — 架構有出來 👏';
+    const rep = document.getElementById('speakReport');
+    rep.style.display = 'block';
+    rep.innerHTML = report;
+  }
+
+  // 記錄
+  if(spoke >= 10){
+    spokenCount++;
+    try{ await window.storage.set('spoken-count', String(spokenCount)); }catch(e){}
+    checkAchievements();
+  }
+}
+
+// ================= 我的故事庫 =================
+let stories = []; // [{id, title, text}]
+
+function openStories(){ renderStories(); document.getElementById('storyBg').classList.add('open'); }
+function closeStories(){ document.getElementById('storyBg').classList.remove('open'); }
+
+function renderStories(){
+  const el = document.getElementById('storyList');
+  el.innerHTML = '';
+  if(stories.length === 0){
+    el.innerHTML = '<div class="story-empty">還沒有故事。寫下 3–5 則你最能講的經歷（專案、實習、社團、解決問題的時刻），它們就是你所有 behavioral 題的彈藥庫。</div>';
+    return;
+  }
+  stories.forEach(s=>{
+    const div = document.createElement('div');
+    div.className = 'story-item';
+    div.innerHTML = '<div class="s-title"><span>'+esc(s.title)+'</span><button class="s-del" onclick="deleteStory(\''+s.id+'\')">刪除</button></div>'
+      + '<div class="s-text">'+esc(s.text)+'</div>';
+    el.appendChild(div);
+  });
+}
+
+async function saveStory(){
+  const title = document.getElementById('storyTitle').value.trim();
+  const text = document.getElementById('storyText').value.trim();
+  if(!title || !text) return;
+  stories.push({ id:'s'+Date.now(), title, text });
+  try{ await window.storage.set('my-stories', JSON.stringify(stories)); }catch(e){}
+  document.getElementById('storyTitle').value = '';
+  document.getElementById('storyText').value = '';
+  renderStories();
+  checkAchievements();
+}
+
+async function deleteStory(id){
+  stories = stories.filter(s=>s.id !== id);
+  try{ await window.storage.set('my-stories', JSON.stringify(stories)); }catch(e){}
+  renderStories();
+}
+
 // ================= mode switching (practice / scan / frame) =================
 function setMode(m){
   mode = (mode === m) ? 'practice' : m; // 再點一次回到練習
@@ -1146,7 +1417,7 @@ function refreshView(){
 
 function renderList(){
   const el = document.getElementById('listItems');
-  const labels = {general:'通用', tech:'技術', biz:'商業', phone:'電面', presales:'presales'};
+  const labels = {general:'通用', tech:'技術', biz:'商業', phone:'電面', presales:'presales', mine:'我的'};
   el.innerHTML = '';
   pool().forEach(c=>{
     const lvl = progress[c.id] ?? 0;
@@ -1222,7 +1493,7 @@ async function exportData(){
     const r = await window.storage.get('custom-cards-v3');
     if(r && r.value) customCards = JSON.parse(r.value);
   }catch(e){}
-  const data = { app:'jastech-v3', exportedAt:new Date().toISOString(), customCards, progress, notes, dailyLog, achievements:achUnlocked, totalGraded };
+  const data = { app:'jastech-v3', exportedAt:new Date().toISOString(), customCards, progress, notes, dailyLog, achievements:achUnlocked, totalGraded, stories, spokenCount };
   const json = JSON.stringify(data, null, 1);
   document.getElementById('ioArea').value = json;
   try{
@@ -1235,7 +1506,7 @@ async function exportData(){
 
 function normalizeCard(c, i){
   if(!c || typeof c.front!=='string' || !Array.isArray(c.patterns) || c.patterns.length===0) return null;
-  const validCats = ['general','tech','biz','phone','presales'];
+  const validCats = ['general','tech','biz','phone','presales','mine'];
   return {
     id: 'c'+Date.now()+'_'+i,
     cat: validCats.includes(c.cat) ? c.cat : 'general',
@@ -1273,6 +1544,12 @@ async function importData(){
       if(data.dailyLog){ dailyLog = Object.assign({}, dailyLog, data.dailyLog); await window.storage.set('daily-log', JSON.stringify(dailyLog)); }
       if(data.achievements){ achUnlocked = Object.assign({}, achUnlocked, data.achievements); await window.storage.set('achievements', JSON.stringify(achUnlocked)); }
       if(typeof data.totalGraded === 'number' && data.totalGraded > totalGraded){ totalGraded = data.totalGraded; await window.storage.set('total-graded', String(totalGraded)); }
+      if(Array.isArray(data.stories)){
+        const have = new Set(stories.map(s=>s.id));
+        data.stories.forEach(s=>{ if(s && s.id && s.title && s.text && !have.has(s.id)) stories.push(s); });
+        await window.storage.set('my-stories', JSON.stringify(stories));
+      }
+      if(typeof data.spokenCount === 'number' && data.spokenCount > spokenCount){ spokenCount = data.spokenCount; await window.storage.set('spoken-count', String(spokenCount)); }
       cards = DEFAULT_CARDS.concat(customCards);
       updateStreak();
       setIOMsg('已還原備份：'+customCards.length+' 張自建卡＋進度＋筆記 ✓');
@@ -1285,30 +1562,47 @@ async function importData(){
   }catch(e){ setIOMsg('匯入失敗：'+e.message); }
 }
 
-const AI_PROMPT = `你是一位外商 presales / sales engineer 面試教練。請幫我生成 6 張英文面試練習卡。
+function buildAIPrompt(){
+  let p = `你是一位外商 presales / sales engineer 面試教練。請幫我生成 6 張英文面試練習卡。
 
 對象：應屆畢業生，目標是 Cisco / Microsoft / UiPath 等級外商的 presales / SE 職位。
+我的英文口說程度：中等偏弱——所以示範回答必須用「超級簡單的詞彙（CEFR A2-B1，國中程度單字）」，但架構要精準清晰。寧可用 10 個簡單字，不要用 1 個難字。
 主題：（在這裡填你想練的主題，例如：資安基礎、雲端架構、客戶異議處理）
 
 每張卡的設計原則：
-- front 是面試官會說的英文問題：真實、有難度、口語（這是聽力輸入）
+- front 是面試官會說的英文問題：真實、有難度、口語（這是聽力輸入，可以難）
 - probe 是這題的考點：一句話標明面試官在測什麼（例：Ownership 當責、Ambiguity 面對模糊）
 - patterns 是簡單可重用的英文句型骨架，用 ___ 標示填空處（這是口說輸出）——聽的難、說的簡單
 - patterns 必須遵守答題框架：behavioral 題用 STAR-L（場景一句→任務一句→行動 2-3 句→結果一句含數字→學到什麼一句）；觀點/技術題用金字塔（The short answer is ___ → 理由編號 → For example ___ → 收回結論）
 - 善用起承轉合連結詞：At the time / So what I did was / But here's the thing / As a result / The takeaway is
-- demo 是只用上述句型組成的完整示範回答，長度約 30-45 秒口說
-- why 用繁體中文解釋這樣答的策略和面試官真正在測什麼，可用 <em> 標示重點、<p> 分段
+- demo 是只用上述句型組成的完整示範回答，長度約 30-45 秒口說，全部用簡單詞彙
+- why 用繁體中文解釋這樣答的策略和面試官真正在測什麼，可用 <em> 標示重點、<p> 分段`;
+
+  if(stories.length > 0){
+    p += `
+
+【我的真實故事庫】（最重要！）
+以下是我的真實經歷。請優先根據這些故事出題：front 出一個這個故事最適合回答的面試問題，demo 就是把我的故事改寫成英文回答——用超簡單的詞彙、但 STAR-L 架構完整精準、保留故事裡的具體細節和數字。這些卡的 cat 一律用 "mine"。故事不夠分配時，剩下的卡再照主題出。
+`;
+    stories.forEach((s,i)=>{ p += '\n故事' + (i+1) + '：' + s.title + '\n' + s.text + '\n'; });
+  }
+
+  p += `
 
 請只輸出一個 JSON array（不要 markdown code fence 以外的文字），每張卡的格式：
-{"cat":"general 或 tech 或 biz 或 phone 或 presales","front":"...","probe":"考點","patterns":["...","..."],"keywords":[["英文詞","中文註解"]],"demo":"...","why":"<p>...</p>"}`;
+{"cat":"general 或 tech 或 biz 或 phone 或 presales 或 mine","front":"...","probe":"考點","patterns":["...","..."],"keywords":[["英文詞","中文註解"]],"demo":"...","why":"<p>...</p>"}`;
+  return p;
+}
 
 async function copyAIPrompt(){
+  const prompt = buildAIPrompt();
+  const withStories = stories.length > 0 ? '（已附上你的 ' + stories.length + ' 則故事）' : '（提示：先到「📖 我的故事」存幾則經歷，AI 就能生成你的專屬回答）';
   try{
-    await navigator.clipboard.writeText(AI_PROMPT);
-    setIOMsg('AI 出題 prompt 已複製 ✓ 貼到 Claude/ChatGPT，把回傳 JSON 貼回來按匯入');
+    await navigator.clipboard.writeText(prompt);
+    setIOMsg('AI 出題 prompt 已複製 ✓ ' + withStories);
   }catch(e){
-    document.getElementById('ioArea').value = AI_PROMPT;
-    setIOMsg('已放到下方框，請手動複製');
+    document.getElementById('ioArea').value = prompt;
+    setIOMsg('已放到下方框，請手動複製 ' + withStories);
   }
 }
 
