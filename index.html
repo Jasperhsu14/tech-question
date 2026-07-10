@@ -77,6 +77,15 @@
   .kw small{ color:var(--text-dim); font-family:'IBM Plex Sans',sans-serif;}
   .demo{ color:var(--text-dim); font-size:13.5px; font-style:italic;}
 
+  /* STAR full story & follow-up */
+  .star-row{
+    display:flex; gap:10px; background:var(--surface-2); border-left:3px solid var(--accent-2);
+    border-radius:0 8px 8px 0; padding:9px 12px; margin-bottom:6px; font-size:13.5px; line-height:1.6;
+  }
+  .star-letter{ font-family:'IBM Plex Mono',monospace; font-weight:700; color:var(--accent-2); flex:none; width:14px;}
+  .fu-q{ font-size:13px; color:var(--accent); font-weight:600; margin:10px 0 4px;}
+  .fu-a{ font-size:13.5px; color:var(--text); line-height:1.65; background:var(--surface-2); border-radius:8px; padding:9px 12px;}
+
   /* why accordion */
   details.why{ margin-top:14px; border:1px solid var(--border); border-radius:10px; overflow:hidden;}
   details.why summary{
@@ -410,6 +419,16 @@
       <div class="pattern">Just to make sure I understand — are you asking about ___?<small>確認題意，同時再爭取時間</small></div>
       <div class="pattern">The closest experience I have is ___.<small>沒有完全對應的經驗時，用最接近的</small></div>
       <div class="pattern">I haven't done that yet — but here's how I'd approach it: ___.<small>把「沒做過」轉成「思考展示」</small></div>
+      <div class="pattern">Let me rephrase that to make it clearer.<small>講到一半想修正——換句話說，不是道歉</small></div>
+      <div class="pattern">I lost my train of thought — let me start this part again.<small>斷線了就大方重來，比硬撐流暢十倍</small></div>
+    </div>
+
+    <div class="frame-sec">
+      <h4>⑤ 被質疑時 · Handling Pushback</h4>
+      <p class="sub">面試官挑戰你的答案時，先接住、再立場、最後拉回共同邏輯。永遠不要直接說 "No, but…"。</p>
+      <div class="pattern">I appreciate that perspective. It's true that ___ is different — but from my point of view, the fundamental question remains the same.<small>接住 → 承認差異 → 回到本質</small></div>
+      <div class="pattern">That's a fair challenge. While the products are different, the underlying logic is identical: ___.<small>「fair challenge」比 disagree 高級——你在評價問題，不是防禦</small></div>
+      <div class="pattern">Whether it's B2B or B2C, we are always dealing with human behavior.<small>萬用收尾：把任何領域差異拉回共同本質</small></div>
     </div>
   </div>
 
@@ -778,7 +797,118 @@ const DEFAULT_CARDS = [
  patterns:["Our team of ___ had to deliver ___ by ___.","We split the work by strengths, and I took ___.","When ___ fell behind, I ___ — and we shipped on time."],
  keywords:[["split by strengths","依強項分工"],["fall behind","進度落後"],["ship on time","準時交付"]],
  demo:"Our team of four had to deliver a course project in three weeks. We split the work by strengths, and I took the backend plus the weekly progress check. When one part fell behind, I paired up with that teammate for two evenings instead of just reminding him — and we shipped on time.",
- why:"<p>題目後半是真考點：<em>how did you make sure</em>——所以答案必須有一個「機制」（weekly check）加一個「補救行動」（隊友落後時你做了什麼）。</p><p>「paired up instead of just reminding」是精髓：催促是 manager 心態，下場一起做才是 teammate 心態。新人面試講這個特別加分。</p>"}
+ why:"<p>題目後半是真考點：<em>how did you make sure</em>——所以答案必須有一個「機制」（weekly check）加一個「補救行動」（隊友落後時你做了什麼）。</p><p>「paired up instead of just reminding」是精髓：催促是 manager 心態，下場一起做才是 teammate 心態。新人面試講這個特別加分。</p>"},
+
+// ================= 我的故事 MY STORIES（親身 STAR，(P)=停頓 (SLOW)=放慢） =================
+{id:'m1',cat:'mine',probe:'領導力 Leadership',
+ front:"Summarize a situation where you took the initiative to get others involved in an important task, and played a leading role to achieve the results you wanted.",
+ patterns:["I led a team of four students — we had four months to design a booth and hold a workshop for DevDays Asia.","First, I organized a team-building dinner to build trust early.","I identified each member's strengths so I could give them the right tasks.","We attracted over 1,000 visitors, and the workshop had a 100% attendance rate."],
+ keywords:[["take the initiative","主動發起"],["build trust early","及早建立信任"],["bi-weekly meetings","雙週會議"],["attendance rate","出席率"]],
+ star:{s:"During my Microsoft internship, I led a team of 4 students. We had 4 months to design a booth and hold a workshop for the DevDays Asia event.",
+  t:"I needed to make sure our team worked well together and finished everything on time.",
+  a:["First, (P) I organized a team-building dinner and invited my manager — this helped everyone build trust early.","Second, (P) I started bi-weekly meetings to track our progress.","Third, (P) I identified each member's strengths so I could give them the right tasks, and I encouraged them when the work became difficult."],
+  r:"The event was a big success. (P) We attracted over 1,000 visitors to our booth, more than 150 people tried our interactive survey, and the workshop had a 100% attendance rate. My manager praised me a lot."},
+ followup:[["What did you do if a team member didn't like their task?","I would have a 1-on-1 talk with them. I would explain why their role is important for the team, and try to add one small task they really like. This keeps them motivated."]],
+ why:"<p>領導題的三個 Action 要有<em>層次感</em>：信任（dinner）→ 機制（bi-weekly meetings）→ 用人（strengths）。三個數字收尾：1,000 訪客、150 互動、100% 出席。</p><p>(P) 是你的停頓記號——<em>數字前停半秒</em>，數字才有重量。</p>"},
+
+{id:'m2',cat:'mine',probe:'策略決策 Decision-making',
+ front:"Tell me about a time you had to make a strategic decision when your team was divided. How did you decide?",
+ patterns:["As the team leader, I had to make the final call.","I evaluated the options on two strategic reasons: stakeholder alignment and consumer relatability.","School data was too niche — tourism data is down-to-earth, a topic everyone understands.","I chose what the consumer wanted over what was easy for the team."],
+ keywords:[["stakeholder alignment","利害關係人對齊"],["relatability","親近感／共鳴"],["down-to-earth","接地氣"],["big picture","全局觀"]],
+ star:{s:"During my Microsoft internship, my team had to choose a dataset for our DevDays Asia workshop demo. We were divided between school administration data — which we were familiar with — and public government data, like tourism statistics.",
+  t:"As the team leader, I had to make the final decision, to make sure the workshop was both professional and engaging for a diverse audience.",
+  a:["I led a team discussion and evaluated the options on two strategic reasons.","Stakeholder alignment: the event was a collaboration with the government, so using public data showed better synergy and respect for our partners.","Consumer relatability: school data was too niche. Tourism data is much more down-to-earth — a topic everyone understands — so the audience could really connect with our AI solution."],
+  r:"The decision paid off. The workshop had a 100% attendance rate and excellent feedback — attendees said the demo was practical and easy to follow. My manager praised my ability to see the big picture and the end-user experience."},
+ followup:[["How does this connect to marketing?","I believe the core of marketing is user-centricity. I pivoted from school data to tourism data — even though school data was easier for us, it wasn't what the audience cared about. I chose what the consumer wanted over what was easy for the team. That is 'Consumer is Boss' in action."]],
+ why:"<p>決策題要展示<em>決策標準</em>，不是結果好運。你的兩個標準（stakeholder alignment / consumer relatability）本身就是答案的骨架——先講標準，再講選擇。</p><p>追問的「Consumer is Boss」是 P&G 語言——面消費品公司時這句是通關密語，面科技公司就講 user-centricity。</p>"},
+
+{id:'m3',cat:'mine',probe:'團隊合作 Collaboration',
+ front:"Give an example of how you worked effectively with people to accomplish an important result.",
+ patterns:["I believe in 'No Surprise' — before the official meeting, I always have 1-on-1 talks first.","We wrote the scripts together, and I sent the plan to the executives early.","We recorded 18 episodes and reached over 3,000 downloads."],
+ keywords:[["No Surprise","不讓人意外原則"],["1-on-1 talks","一對一溝通"],["final check","最後確認"],["ask for feedback","主動要回饋"]],
+ star:{s:"I was responsible for recording the Microsoft Intern Podcast. I had to work with other interns and invite high-level managers to be our guests.",
+  t:"I had to make sure the recording was smooth and the content was high-quality.",
+  a:["I believe in 'No Surprise.' Before the official meeting, I always had 1-on-1 talks with my partners — this helped us understand each other's ideas and build trust.","We wrote the scripts together. Then I sent the plan to the executives early.","Before recording, I did a final check (P) with my partner and the guest, to make sure everyone was comfortable.","After each episode, I asked for feedback to improve the next one."],
+  r:"We successfully recorded 18 episodes. The guests were very happy with the process — some even shared it on social media — and we reached over 3,000 downloads."},
+ followup:[["How did you handle a partner who had a different opinion on the script?","We followed the 'No Surprise' rule. We sat down and shared our reasons, and tried to combine the best parts of both ideas. So we finished the script faster, and both felt happy."]],
+ why:"<p>「No Surprise」是這張卡的<em>個人品牌句</em>——面試官一天聽幾十個 STAR，有自己命名原則的人才會被記住。追問時還能重複使用同一原則，前後一致＝可信。</p><p>結尾雙數字：18 集＋3,000 下載。高層來賓主動分享到社群是隱藏加分：證明合作對象滿意到願意背書。</p>"},
+
+{id:'m4',cat:'mine',probe:'數據說服 Persuasion with facts',
+ front:"Describe an instance where you made effective use of facts to secure the agreement of others.",
+ patterns:["I did not give up — first, I wanted to know why.","I used two main facts: a survey showing 80% of interns needed their help, and a new one-hour agenda.","'You only need to come for one hour — I will handle everything else.'"],
+ keywords:[["secure agreement","取得同意"],["survey","調查數據"],["agenda","議程"],["Plan B","備案"]],
+ star:{s:"I led a networking event in the LinkedIn Ambassador program, and invited 4 mentors to attend in person during their business trip from Hong Kong to Taiwan.",
+  t:"A week before the event, one of the mentors wanted to cancel. I had to change his mind to save the event.",
+  a:["I did not give up — first, I wanted to know why. I realized it was the end of the quarter and he was worried about time.","So I used two main facts. First, I showed a survey: 80% of interns really needed their help and had already booked the time — this made the mentors feel important.","Second, I changed the plan. I showed a new agenda and told them: 'You only need to come for one hour, and I will handle everything else.'"],
+  r:"The mentors were impressed by the facts and the simple plan. All 4 mentors joined the event. It was a success, and we built a stronger community."},
+ followup:[["What would you do if the mentors still refused to come?","I would offer a hybrid option — ask them to join a 15-minute video call instead of coming in person. I always prepare a Plan B, so we can still achieve the goal."]],
+ why:"<p>說服題的滿分結構：<em>先診斷再開藥</em>——「I wanted to know why」顯示你不是硬推，是先找到對方的真實顧慮（時間），再用事實對症下藥。</p><p>兩個事實一軟一硬：80% 調查（讓對方感到被需要）＋新議程（降低對方成本）。說服＝提高對方的價值感、降低對方的成本。</p>"},
+
+{id:'m5',cat:'mine',probe:'定義問題 Problem framing',
+ front:"Describe a situation where you had to seek out relevant information, define key issues, and decide which steps to take to get the desired results.",
+ patterns:["At first I just wanted to compare products — then I asked: what is the true purpose of this report?","I decided to focus on marketing strategy instead of technical features.","I start with a hypothesis, discuss it with the lead, then optimize and define the key issue."],
+ keywords:[["competitive analysis","競品分析"],["true purpose","真正目的"],["pain point","痛點"],["hypothesis","假設"]],
+ star:{s:"I had a project to do cloud service competitive analysis between Microsoft Azure and Amazon AWS.",
+  t:"At first, I just wanted to compare products. But then I thought about the true purpose of the report — I needed to find what really helps our marketing manager.",
+  a:["I discussed it with the team and the marketing manager, (P) and decided to focus on marketing strategy instead of just technical features.","I researched both Azure and AWS: PR news, media coverage, and the scope of their events."],
+  r:"I gave new suggestions to the Marketing Manager and the COO — for example, Azure could hold more community events. They liked the direction, because it solved a real business pain point and helped them plan next year."},
+ followup:[["Why did you choose to focus on marketing instead of technical parts?","Because our team's goal was to attract new customers, not to build the product. Marketing insights are more useful for managers to make sales plans — so I changed the focus to match the business need."]],
+ why:"<p>這題的靈魂是<em>重新定義問題</em>：從「比較產品」升級成「幫行銷主管做決策」。能自問 true purpose 的人，才是不用被 micro-manage 的人。</p><p>收尾的方法論一句話（hypothesis → discuss → optimize → define）把單一故事升級成可重複的工作系統。</p>"},
+
+{id:'m6',cat:'mine',probe:'高標目標 Goal-setting',
+ front:"Describe an instance where you set your sights on a high, demanding goal and saw it through completion.",
+ patterns:["I set a high goal: 50 strategic 1-on-1s in one year, to gain a whole view of the business.","Before every meeting, I studied their business and prepared questions.","I listened to their ideas, but I didn't take every advice — I filtered the best ones.","In the end, I finished 65 meetings — 130% of my goal."],
+ keywords:[["strategic 1-on-1","策略性一對一"],["constructive listening","建設性傾聽"],["visibility","能見度"],["bridge the gap","搭起橋樑"]],
+ star:{s:"When I was onboarding at Microsoft, I had a meeting with my manager and realized how much value these conversations gave me.",
+  t:"So I set a high goal: 50 strategic 1-on-1s in one year — with managers, mentors, and colleagues across different teams — so I could gain a whole view of the business.",
+  a:["I reached out to many leaders: CSAMs, and even the COO.","Research: before every meeting, I studied their business and prepared questions.","Constructive listening: I listened to their ideas, but I didn't take every advice — I filtered the best ideas to solve my project's problems.","Execution: for example, I applied these insights to DevDays Asia, to bridge the gap between the technical and marketing teams."],
+  r:"(P) In the end, I finished 65 meetings — 130% of my goal. It gave me great visibility in the team, and I work faster now, because I know exactly who to ask for help."},
+ followup:[["How did you balance these 65 meetings with your daily work?","I stayed organized. I used my calendar to block specific time for meetings, and I prepared my materials on weekends — so I could focus on my main tasks during the day without any delays."]],
+ why:"<p>高標題最怕講「公司給的 KPI」——你這個是<em>自訂目標</em>，含金量完全不同。50→65（130%）的數字結構是完美的：目標具體、超額完成。</p><p>「I didn't take every advice — I filtered」是精髓句：顯示你謙虛求教但有自己的判斷，不是海綿是過濾器。</p>"},
+
+{id:'m7',cat:'mine',probe:'創新效率 Innovation',
+ front:"Describe a creative or innovative idea that you produced which led to a significant contribution to the success of a project.",
+ patterns:["I spent (SLOW) two hours every week manually moving data — inefficient, and a high risk of mistakes.","I asked my manager which numbers matter most for the business: CVR, MQL, and web views.","We saved 80% of the time on data entry — and could finally focus on the trend, not the moving."],
+ keywords:[["automate","自動化"],["CVR (conversion rate)","轉換率"],["MQL","行銷合格名單"],["data accuracy","數據正確性"]],
+ star:{s:"At GoSky, I had to spend (SLOW) 2 hours every week manually collecting data from Google Analytics into a spreadsheet. My manager also spent a lot of time checking if the numbers were correct — inefficient, and a high risk of mistakes.",
+  t:"I wanted to turn this manual work into an automated system, so we could focus on analyzing the data instead of just moving it.",
+  a:["I proposed a project to automate the data connection.","I talked to my manager to find the most important numbers for the business — we decided to focus on CVR, MQL, and web views.","I built a dashboard to show these numbers clearly, and checked with my manager often to make sure the layout was easy to use."],
+  r:"We saved 80% of the time on data entry. With the dashboard, we could see changes in the data immediately — which gave us more time (P) to focus on what really matters."},
+ followup:[["What was the biggest problem when you built the dashboard?","Data accuracy. The GA data was very messy, and connecting our own platform's data was difficult — the hardest part was calculating CVR across different platforms. So I worked closely with engineers for technical help, and checked every detail with my manager, until the metrics were logical."]],
+ why:"<p>創新題不用是驚天發明——<em>發現重複浪費＋主動提案＋落地</em>就是面試官要的 smart risk。關鍵數字對比：每週 2 小時 → 省 80%。</p><p>「和 manager 先對齊哪些指標重要」是隱藏考點：創新前先確認商業價值，證明你不是為了炫技而做。追問的 data accuracy 回答展示了跨部門協作（engineers）。</p>"},
+
+{id:'m8',cat:'mine',probe:'優先排序 Prioritization',
+ front:"Provide an example of how you assessed a situation and achieved good results by focusing on the most important priorities.",
+ patterns:["I used a simple system: 'who asked for it' and 'when is the deadline.'","If there was a conflict, I talked to my manager early and asked to move the less urgent one.","Because I communicated early and stayed organized, I never missed a major deadline."],
+ keywords:[["assess","評估"],["deadline conflict","期限衝突"],["communicate early","提早溝通"],["transparency","透明"]],
+ star:{s:"At Microsoft, I worked with many stakeholders — the marketing manager, and even the COO — and I often had many tasks at the same time.",
+  t:"I had to finish all the tasks on time, without losing quality.",
+  a:["(SLOW) I used a simple system: I divided tasks by 'who asked for it' and 'when is the deadline.'","If I had a conflict, I would talk to my manager early — I explained my current tasks, and asked if I could move the deadline of the less urgent ones."],
+  r:"Because I communicated early and stayed organized, I delivered all the important projects on time. I never missed a major deadline."},
+ followup:[["If two managers gave you urgent tasks at the same time, how would you choose?","I would check the impact first, but the most important thing is transparency. I would talk to both of them, explain my current workload, and ask them to help me decide which task is more important for the company's goal — so we find a solution together, without missing any deadline."]],
+ why:"<p>這題的滿分不在系統多複雜，在<em>簡單＋透明</em>。「who asked / when due」兩軸就夠，重點是衝突時「提早說」而不是硬吞。</p><p>追問是陷阱題：選任何一個 manager 都是錯的。正確姿勢是把選擇權還給他們、用公司目標當裁判——你當透明的協調者，不當夾心餅乾。</p>"},
+
+{id:'m9',cat:'mine',probe:'技能轉換 Learning to impact',
+ front:"Provide an example of how you acquired technical skills and converted them into practical application.",
+ patterns:["I learned Power BI by myself — then I designed a course, (P) not just a tool demo.","I translated the technical parts into business cases and marketing language.","I got a 4.83 out of 5 satisfaction rate from about 60 students."],
+ keywords:[["acquire skills","習得技能"],["translate","轉譯"],["business case","商業案例"],["satisfaction rate","滿意度"]],
+ star:{s:"I have a background in Information Management, but I work in marketing — and I saw that many marketing people struggle with data.",
+  t:"I wanted to use my technical skills to help students understand data clearly.",
+  a:["I learned Power BI by myself.","Then I organized a workshop for students. I decided to design a course, (P) not just teach the tool.","I translated the technical parts into business cases and marketing language, so everyone could follow — and work like they were solving a real problem."],
+  r:"The workshop was very successful. I got a 4.83 out of 5 satisfaction rate from around 60 students."},
+ followup:[["What was the hardest part about teaching non-tech people?","Everyone had different skill levels and software versions. Some people were fast, some were slow. To solve this, I chose the web version of Power BI, because it's the same for everyone. And I spent more time explaining the business logic instead of the technical steps — so everyone could follow the class, and understand why the data matters."]],
+ why:"<p>這題有兩層：學（self-taught Power BI）是及格線，<em>轉譯</em>（technical → business language）才是你的差異化——這正是 presales / marketing 的核心能力。</p><p>「design a course, not just teach the tool」是層次句。4.83/5 ＋ 60 人是罕見精確的數字，精確到小數點第二位反而最可信。</p>"},
+
+{id:'m10',cat:'mine',probe:'衝突處理 Conflict resolution',
+ front:"Tell me about a time you had a conflict with a partner or vendor on a project. How did you resolve it?",
+ patterns:["The agency wanted a very different style — I wanted to focus on user pain points.","For the next three videos, I changed the process: 'pre-communication' meetings.","Data is the best way to solve conflicts — let the audience decide.","The four videos reached over 150,000 views across all platforms."],
+ keywords:[["media agency","媒體代理商"],["revision","修改（版本）"],["pre-communication","事前溝通"],["A/B test","雙版本測試"]],
+ star:{s:"I led a short-video project to promote Copilot, working with a media agency. Our goal was to make complex AI technology simple and fun for users.",
+  t:"We had to create 4 videos together. But during the first video, we had a conflict: the agency wanted a very different style, while I wanted to focus on trends and real user pain points.",
+  a:["Because of the conflict, the first video went through many revisions. So for the next 3 videos, I changed the process.","I started 'pre-communication' meetings: I clearly explained the logic behind our ideas, and showed them exactly what problems our users faced.","I listened to their creative ideas, but made sure our main goal stayed clear."],
+  r:"The collaboration became much smoother, and we saved a lot of time on revisions. We finished all 4 videos, and they reached over 150,000 views across all platforms."},
+ followup:[["If the agency still disagreed with you after the meeting, what would you do?","I would suggest a small test: release two short versions of the video, and see which one gets more likes and comments. Data is the best way to solve conflicts — we let the audience decide."],["How does this experience transfer to other industries?","I reached 150k views by translating complex tech into simple business scenes. Whether it's software or shampoo, the goal is the same: making the consumer's life easier. My tech background lets me use data-driven insights to find those 'Moments of Truth' faster and more accurately."]],
+ why:"<p>衝突題的重點不是誰贏，是你<em>改了流程</em>——從第一支的來回修改，到後三支的 pre-communication。一次衝突→一個制度，這是最高級的答法。</p><p>兩個追問都值得背：「small test, let the audience decide」用數據仲裁衝突；「software or shampoo」是跨產業面試（尤其消費品）的殺手收尾。</p>"}
 ];
 
 // 考點標示（原有卡片；電面卡的 probe 直接寫在卡片裡）
@@ -806,6 +936,20 @@ let mode = 'practice'; // 'practice' | 'scan'
 
 function esc(s){ const d=document.createElement('div'); d.textContent=s; return d.innerHTML; }
 
+// ================= spaced repetition =================
+// progress[id] = { l: 熟悉度 0-2, due: 下次到期時間, at: 上次練習時間 }
+// 待加強→10分鐘後再出現；普通→明天；熟悉→3天後
+const SR_INTERVALS = [10*60*1000, 24*3600*1000, 3*24*3600*1000];
+
+function migrateProgress(){
+  Object.keys(progress).forEach(k=>{
+    if(typeof progress[k] === 'number') progress[k] = {l: progress[k], due: 0, at: 0};
+  });
+}
+function lvl(id){ const p = progress[id]; return p ? p.l : 0; }
+function dueAt(id){ const p = progress[id]; return p ? (p.due||0) : 0; }
+function dueCount(){ const now = Date.now(); return pool().filter(c=>dueAt(c.id)<=now).length; }
+
 function renderBack(c){
   let html = '';
   if(c.patterns && c.patterns.length){
@@ -819,9 +963,24 @@ function renderBack(c){
     });
     html += '</div>';
   }
+  if(c.star){
+    html += '<div class="b-label">STAR 完整版 · full story</div>';
+    const rows = [['S', c.star.s], ['T', c.star.t]];
+    (c.star.a || []).forEach(a=> rows.push(['A', a]));
+    rows.push(['R', c.star.r]);
+    rows.forEach(([letter, text])=>{
+      if(text) html += '<div class="star-row"><span class="star-letter">'+letter+'</span><span>'+esc(text)+'</span></div>';
+    });
+  }
   if(c.demo){
     html += '<div class="b-label">示範回答 · sample</div>';
     html += '<div class="demo">"'+esc(c.demo)+'"</div>';
+  }
+  if(c.followup && c.followup.length){
+    html += '<div class="b-label">追問 · follow-up</div>';
+    c.followup.forEach(f=>{
+      html += '<div class="fu-q">Q · '+esc(f[0])+'</div><div class="fu-a">'+esc(f[1])+'</div>';
+    });
   }
   if(c.why){
     html += '<details class="why" onclick="event.stopPropagation()"><summary>為什麼這樣答</summary><div class="why-body">'+c.why+'</div></details>';
@@ -845,6 +1004,7 @@ async function loadData(){
     const r2 = await window.storage.get('progress-v3');
     if(r2 && r2.value) progress = JSON.parse(r2.value);
   }catch(e){}
+  migrateProgress();
   try{
     const rn = await window.storage.get('my-notes');
     if(rn && rn.value) notes = JSON.parse(rn.value);
@@ -901,10 +1061,12 @@ function pool(){
 }
 
 function buildQueue(){
-  queue = pool().slice().sort((a,b)=>{
-    const pa = progress[a.id] ?? 0, pb = progress[b.id] ?? 0;
-    return pa - pb + (Math.random()-0.5);
-  });
+  // 到期的卡優先（熟悉度低→先出），還沒到期的排後面（快到期→先出）
+  const now = Date.now();
+  const p = pool().slice();
+  const due   = p.filter(c=>dueAt(c.id)<=now).sort((a,b)=> lvl(a.id)-lvl(b.id) + (Math.random()-0.5));
+  const later = p.filter(c=>dueAt(c.id)> now).sort((a,b)=> dueAt(a.id)-dueAt(b.id));
+  queue = due.concat(later);
   qIndex = 0;
 }
 
@@ -938,7 +1100,7 @@ function showCard(){
     ta.value = notes[currentCard.id] || '';
     ta.addEventListener('input', onNoteInput);
   }
-  updateSignal(progress[currentCard.id] ?? 0);
+  updateSignal(lvl(currentCard.id));
   document.getElementById('stat').textContent = (qIndex+1) + ' / ' + queue.length;
   prevBtn.disabled = (qIndex === 0);
 }
@@ -1013,7 +1175,7 @@ function updateSignal(level){
 
 async function grade(level){
   if(!currentCard) return;
-  progress[currentCard.id] = level;
+  progress[currentCard.id] = { l: level, due: Date.now() + SR_INTERVALS[level], at: Date.now() };
   updateSignal(level);
   try{ await window.storage.set('progress-v3', JSON.stringify(progress)); }catch(e){}
   sessionCount++;
@@ -1026,7 +1188,7 @@ async function grade(level){
 }
 
 function updateStreak(){
-  document.getElementById('streak').textContent = '今日已練習 ' + sessionCount + ' 題';
+  document.getElementById('streak').textContent = '今日已練習 ' + sessionCount + ' 題 · 待複習 ' + dueCount() + ' 張';
   // goal bar
   const pct = Math.min(100, sessionCount / DAILY_GOAL * 100);
   const fill = document.getElementById('goalFill');
@@ -1082,11 +1244,11 @@ const ACHIEVEMENTS = [
   {id:'streak30',emoji:'👑', name:'月度堅持', desc:'連續練習 30 天',            test:()=> calcStreak() >= 30},
   {id:'total50', emoji:'💪', name:'五十題斬', desc:'累計練習 50 題',            test:()=> totalGraded >= 50},
   {id:'total200',emoji:'🏅', name:'兩百題斬', desc:'累計練習 200 題',           test:()=> totalGraded >= 200},
-  {id:'master10',emoji:'🧠', name:'漸入佳境', desc:'10 張題卡標記為熟悉',       test:()=> Object.values(progress).filter(v=>v===2).length >= 10},
+  {id:'master10',emoji:'🧠', name:'漸入佳境', desc:'10 張題卡標記為熟悉',       test:()=> Object.keys(progress).filter(k=>lvl(k)===2).length >= 10},
   {id:'catFull', emoji:'🏆', name:'分類制霸', desc:'任一分類全部熟悉',          test:()=>{
     const cats = {};
     cards.forEach(c=>{ (cats[c.cat] = cats[c.cat]||[]).push(c); });
-    return Object.values(cats).some(list => list.length>0 && list.every(c=>progress[c.id]===2));
+    return Object.values(cats).some(list => list.length>0 && list.every(c=>lvl(c.id)===2));
   }},
   {id:'note5',   emoji:'📝', name:'筆記家',   desc:'寫下 5 則我的版本',         test:()=> Object.values(notes).filter(v=>v && v.trim()).length >= 5},
   {id:'custom1', emoji:'✍️', name:'出題人',   desc:'新增第一張自建卡',          test:()=> cards.length > DEFAULT_CARDS.length},
@@ -1145,7 +1307,7 @@ function confetti(){
 function openAch(){
   document.getElementById('stStreak').textContent = calcStreak();
   document.getElementById('stTotal').textContent = totalGraded;
-  const mastered = Object.values(progress).filter(v=>v===2).length;
+  const mastered = Object.keys(progress).filter(k=>lvl(k)===2).length;
   document.getElementById('stMaster').textContent = mastered + ' / ' + cards.length;
 
   // 近 7 天長條
@@ -1169,7 +1331,7 @@ function openAch(){
 
   // 掌握度
   const counts = [0,0,0];
-  cards.forEach(c=>{ counts[progress[c.id] ?? 0]++; });
+  cards.forEach(c=>{ counts[lvl(c.id)]++; });
   const total = cards.length || 1;
   const colors = ['var(--again)','var(--accent)','var(--accent-2)'];
   const mb = document.getElementById('masteryBar');
@@ -1420,10 +1582,10 @@ function renderList(){
   const labels = {general:'通用', tech:'技術', biz:'商業', phone:'電面', presales:'presales', mine:'我的'};
   el.innerHTML = '';
   pool().forEach(c=>{
-    const lvl = progress[c.id] ?? 0;
+    const level = lvl(c.id);
     const item = document.createElement('div');
     item.className = 'scan-item';
-    let html = '<div class="scan-head"><div class="dot l'+lvl+'"></div>';
+    let html = '<div class="scan-head"><div class="dot l'+level+'"></div>';
     html += '<div class="scan-q">'+esc(c.front)+'</div>';
     html += '<div class="scan-cat">'+ (labels[c.cat]||c.cat) +'</div></div>';
     if(c.probe) html += '<span class="scan-probe">考點 · '+esc(c.probe)+'</span>';
@@ -1514,6 +1676,8 @@ function normalizeCard(c, i){
     probe: typeof c.probe==='string' ? c.probe : '',
     patterns: c.patterns.filter(p=>typeof p==='string'),
     keywords: Array.isArray(c.keywords) ? c.keywords.filter(k=>Array.isArray(k)&&k.length>=1).map(k=>[String(k[0]), String(k[1]||'')]) : [],
+    star: (c.star && typeof c.star==='object' && !Array.isArray(c.star)) ? c.star : undefined,
+    followup: Array.isArray(c.followup) ? c.followup.filter(f=>Array.isArray(f)&&f.length>=2) : undefined,
     demo: typeof c.demo==='string' ? c.demo : '',
     why: typeof c.why==='string' ? c.why : ''
   };
@@ -1538,6 +1702,7 @@ async function importData(){
       const customCards = (data.customCards||[]).filter(c=>c&&c.front&&Array.isArray(c.patterns));
       await window.storage.set('custom-cards-v3', JSON.stringify(customCards));
       progress = Object.assign({}, progress, data.progress||{});
+      migrateProgress(); // 舊版備份的 progress 是數字，轉成間隔重複格式
       notes = Object.assign({}, notes, data.notes||{});
       await window.storage.set('progress-v3', JSON.stringify(progress));
       await window.storage.set('my-notes', JSON.stringify(notes));
